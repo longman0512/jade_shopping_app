@@ -5,8 +5,15 @@ import { useCart } from '../App';
 import { Star, Truck, Shield, Minus, Plus, ShoppingBag, Sparkles } from 'lucide-react';
 import { createChatSession, sendMessageToGemini } from '../services/geminiService';
 
-const ProductDetail: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+interface ProductDetailProps {
+    productId?: string;
+    isSidebar?: boolean;
+    onClose?: () => void;
+}
+
+const ProductDetail: React.FC<ProductDetailProps> = ({ productId, isSidebar = false, onClose }) => {
+  const { id: paramId } = useParams<{ id: string }>();
+  const id = productId || paramId;
   const product = MOCK_PRODUCTS.find(p => p.id === id);
   const { addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
@@ -16,10 +23,20 @@ const ProductDetail: React.FC = () => {
   const [styleAdvice, setStyleAdvice] = useState<string>('');
   const [isLoadingAdvice, setIsLoadingAdvice] = useState(false);
 
+  // Reset state when product changes
+  useEffect(() => {
+    setQuantity(1);
+    setSelectedSize('');
+    setStyleAdvice('');
+  }, [id]);
+
   if (!product) return <div className="p-20 text-center">Product not found</div>;
 
   const handleAddToCart = () => {
     addToCart({ ...product, quantity, selectedSize });
+    if (isSidebar && onClose) {
+        onClose();
+    }
   };
 
   const fetchStyleAdvice = async () => {
@@ -42,13 +59,19 @@ const ProductDetail: React.FC = () => {
     }
   };
 
+  const containerClass = isSidebar ? "bg-white min-h-full pb-20" : "bg-white py-12";
+  const innerWrapperClass = isSidebar ? "px-6 pt-12 pb-6" : "container mx-auto px-4 lg:px-8";
+  const layoutClass = isSidebar ? "flex flex-col gap-6" : "flex flex-col lg:flex-row gap-12";
+  const imageContainerClass = isSidebar ? "w-full" : "w-full lg:w-1/2";
+  const infoContainerClass = isSidebar ? "w-full" : "w-full lg:w-1/2";
+
   return (
-    <div className="bg-white py-12">
-      <div className="container mx-auto px-4 lg:px-8">
-        <div className="flex flex-col lg:flex-row gap-12">
+    <div className={containerClass}>
+      <div className={innerWrapperClass}>
+        <div className={layoutClass}>
           {/* Image Gallery */}
-          <div className="w-full lg:w-1/2">
-            <div className="aspect-[3/4] bg-gray-100 rounded-sm overflow-hidden mb-4 relative group">
+          <div className={imageContainerClass}>
+            <div className={`bg-gray-100 rounded-sm overflow-hidden mb-4 relative group ${isSidebar ? 'aspect-square' : 'aspect-[3/4]'}`}>
               <img 
                 src={product.image} 
                 alt={product.name} 
@@ -63,11 +86,11 @@ const ProductDetail: React.FC = () => {
           </div>
 
           {/* Product Info */}
-          <div className="w-full lg:w-1/2">
+          <div className={infoContainerClass}>
             <div className="mb-2">
                 <span className="text-jade-600 font-bold uppercase tracking-wider text-xs">{product.brand}</span>
             </div>
-            <h1 className="text-3xl md:text-4xl font-serif font-bold text-gray-900 mb-4">{product.name}</h1>
+            <h1 className={`${isSidebar ? 'text-2xl' : 'text-3xl md:text-4xl'} font-serif font-bold text-gray-900 mb-4`}>{product.name}</h1>
             
             <div className="flex items-center mb-6 gap-4">
                <div className="flex text-yellow-400">
@@ -89,7 +112,7 @@ const ProductDetail: React.FC = () => {
                )}
             </div>
 
-            <p className="text-gray-600 leading-relaxed mb-8">
+            <p className="text-gray-600 leading-relaxed mb-8 text-sm">
                 {product.description}
             </p>
 
@@ -176,10 +199,10 @@ const ProductDetail: React.FC = () => {
 
             <div className="grid grid-cols-2 gap-4 text-xs text-gray-500">
                 <div className="flex items-center gap-2">
-                    <Truck size={16} /> Free shipping on orders over $75
+                    <Truck size={16} /> Free shipping over $75
                 </div>
                 <div className="flex items-center gap-2">
-                    <Shield size={16} /> 2-year extended warranty
+                    <Shield size={16} /> 2-year warranty
                 </div>
             </div>
           </div>

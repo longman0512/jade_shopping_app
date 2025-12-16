@@ -2,11 +2,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import { CATEGORIES, MOCK_PRODUCTS, BRANDS } from '../constants';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Star, ChevronRight, ChevronLeft, Play } from 'lucide-react';
+import { useProductDrawer } from '../App';
 
 const Home: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState('Women');
   const dealsScrollRef = useRef<HTMLDivElement>(null);
   const lovedScrollRef = useRef<HTMLDivElement>(null);
+  const { openProduct } = useProductDrawer();
   
   // Video Carousel State
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
@@ -76,10 +78,10 @@ const Home: React.FC = () => {
                 className="flex overflow-x-auto gap-4 pb-4 no-scrollbar snap-x snap-mandatory px-2"
             >
                 {deals.map((product) => (
-                <Link 
-                    to={`/product/${product.id}`} 
+                <div 
+                    onClick={() => openProduct(product.id)}
                     key={product.id}
-                    className="flex-shrink-0 w-56 snap-start group"
+                    className="flex-shrink-0 w-56 snap-start group cursor-pointer"
                 >
                     <div className="relative aspect-[3/4] bg-gray-100 mb-3 overflow-hidden rounded-sm">
                     <img 
@@ -96,7 +98,7 @@ const Home: React.FC = () => {
                     <h3 className="font-bold text-gray-900 text-base leading-tight group-hover:text-jade-700 transition-colors text-center px-2">
                     {product.name}
                     </h3>
-                </Link>
+                </div>
                 ))}
             </div>
           </div>
@@ -150,8 +152,8 @@ const Home: React.FC = () => {
                     className="flex overflow-x-auto gap-6 pb-6 no-scrollbar snap-x snap-mandatory px-2"
                 >
                 {lovedProducts.map((product) => (
-                    <div key={product.id} className="flex-shrink-0 w-80 snap-center bg-white border border-gray-100 rounded-sm hover:shadow-xl transition-all duration-300 flex flex-col group">
-                    <Link to={`/product/${product.id}`} className="block relative aspect-[4/5] overflow-hidden">
+                    <div key={product.id} className="flex-shrink-0 w-80 snap-center bg-white border border-gray-100 rounded-sm hover:shadow-xl transition-all duration-300 flex flex-col group cursor-pointer" onClick={() => openProduct(product.id)}>
+                    <div className="block relative aspect-[4/5] overflow-hidden">
                         <img 
                         src={product.image} 
                         alt={product.name} 
@@ -162,11 +164,11 @@ const Home: React.FC = () => {
                                 Sale
                             </div>
                         )}
-                    </Link>
+                    </div>
                     <div className="p-5 flex flex-col flex-grow">
-                        <Link to={`/product/${product.id}`}>
+                        <div>
                             <h3 className="font-bold text-lg text-gray-900 mb-2 hover:text-jade-700 transition-colors line-clamp-1">{product.name}</h3>
-                        </Link>
+                        </div>
                         <p className="text-sm text-gray-500 line-clamp-2 mb-4 flex-grow">{product.description}</p>
                         
                         <div className="mt-auto pt-4 border-t border-gray-50">
@@ -211,7 +213,7 @@ const Home: React.FC = () => {
       </section>
 
       {/* SECTION 3: Inspiration & Trends (Single Video Auto-Slide) - No Title, No Padding */}
-      <section className="mb-4">
+      <section className="bg-white mb-4">
         <div className="container max-w-[1440px]">
           {/* Main Video Display - Width same as container */}
           <div className="w-full relative group">

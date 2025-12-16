@@ -1,22 +1,29 @@
 import React from 'react';
 import { Product } from '../types';
 import { Star, Heart } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useProductDrawer } from '../App';
 
 interface ProductCardProps {
   product: Product;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const { openProduct } = useProductDrawer();
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    openProduct(product.id);
+  };
+
   return (
-    <div className="group flex flex-col h-full bg-white border border-transparent hover:border-gray-100 hover:shadow-xl transition-all duration-300 rounded-sm relative">
+    <div className="group flex flex-col h-full bg-white border border-transparent hover:border-gray-100 hover:shadow-xl transition-all duration-300 rounded-sm relative cursor-pointer" onClick={handleClick}>
        {/* Wishlist Button */}
        <button className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white/80 hover:bg-white text-gray-400 hover:text-red-500 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
         <Heart size={18} />
       </button>
 
       {/* Image */}
-      <Link to={`/product/${product.id}`} className="relative overflow-hidden aspect-[3/4] bg-gray-100">
+      <div className="relative overflow-hidden aspect-[3/4] bg-gray-100">
         <img 
           src={product.image} 
           alt={product.name} 
@@ -27,16 +34,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             Sale
           </div>
         )}
-      </Link>
+      </div>
 
       {/* Details */}
       <div className="p-4 flex flex-col flex-grow">
-        <Link to={`/product/${product.id}`} className="block">
+        <div className="block">
             <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">{product.brand}</h3>
             <h2 className="text-sm font-medium text-gray-900 line-clamp-2 mb-2 group-hover:text-jade-700 transition-colors h-10">
             {product.name}
             </h2>
-        </Link>
+        </div>
         
         {/* Rating */}
         <div className="flex items-center mb-2">
