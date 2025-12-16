@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Jade | The Department Store</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
         theme: {
@@ -17,17 +17,26 @@
                 200: '#a7f3d0',
                 300: '#6ee7b7',
                 400: '#34d399',
-                500: '#10b981', // Brand Primary
+                500: '#10b981', 
                 600: '#059669',
                 700: '#047857',
                 800: '#065f46',
                 900: '#064e3b',
                 950: '#022c22',
+              },
+              google: {
+                gray: '#f1f3f4',
+                text: '#202124',
+                blue: '#1967d2',
               }
             },
             fontFamily: {
-              serif: ['"Playfair Display"', 'serif'],
-              sans: ['"Lato"', 'sans-serif'],
+              sans: ['"Inter"', 'sans-serif'],
+              serif: ['"Inter"', 'sans-serif'], // Replacing serif with sans for Google look
+            },
+            borderRadius: {
+              '4xl': '2rem',
+              '5xl': '2.5rem',
             }
           }
         }
@@ -35,10 +44,9 @@
     </script>
     <style>
       body {
-        font-family: 'Lato', sans-serif;
-      }
-      h1, h2, h3, h4, h5, h6 {
-        font-family: 'Playfair Display', serif;
+        font-family: 'Inter', sans-serif;
+        background-color: #ffffff;
+        color: #202124;
       }
       /* Hide scrollbar for chrome/safari/opera */
       .no-scrollbar::-webkit-scrollbar {

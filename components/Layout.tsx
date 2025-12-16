@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingBag, Search, Menu, X, User, MessageSquareMore } from 'lucide-react';
+import { ShoppingBag, Search, Menu, X, User, MessageSquareMore, HelpCircle } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../App';
 import GeminiChat from './GeminiChat';
-import { ArrowRight, Star, ChevronRight, ChevronLeft, Play } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -15,6 +15,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   // Scroll to top on route change
   useEffect(() => {
@@ -22,172 +23,188 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     setIsMenuOpen(false);
   }, [location]);
 
+  // Handle scroll effect for header shadow
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  const isHomePage = location.pathname === '/';
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-[#e3e6e6] text-gray-900 font-sans">
-      {/* Promo Banner */}
-      <div className="bg-jade-600 w-full text-white text-xs sm:text-sm py-2 text-center px-4 font-bold tracking-wide">
-        FRIENDS & FAMILY SALE: EXTRA 30% OFF SELECT STYLES | CODE: FRIEND
+    <div className="min-h-screen flex flex-col items-center bg-white text-[#202124] font-sans">
+      {/* Top utility bar - Green Background */}
+      <div className="w-full bg-[#26966b] text-[11px] py-2 text-center text-white font-medium">
+        Free shipping on all orders. <span className="text-white font-bold ml-1 cursor-pointer hover:underline">Learn more</span>
       </div>
 
-      {/* Header - Full Width Background */}
-      <header className="sticky top-0 z-40 bg-gray-900 border-b border-gray-800 shadow-lg w-full">
-        {/* Constrained Content Container */}
-        <div className="w-full max-w-[1440px] mx-auto px-4 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            {/* Mobile Menu Button */}
-            <button 
-              className="lg:hidden p-2 text-white hover:text-jade-400"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+      {/* Header - Dark Background */}
+      <header className={`sticky top-0 z-40 bg-[#121827] w-full transition-shadow duration-200 ${scrolled ? 'shadow-md' : ''}`}>
+        <div className="w-full max-w-[1440px] mx-auto px-6">
+          <div className="flex items-center justify-between h-16">
+            
+            {/* Left: Logo & Mobile Menu */}
+            <div className="flex items-center gap-4">
+               <button 
+                className="lg:hidden p-2 text-gray-300 hover:bg-white/10 rounded-full"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+              >
+                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
 
-            {/* Logo */}
-            <Link to="/" className="flex-shrink-0 flex items-center gap-2">
-              <div className="w-8 h-8 bg-white text-gray-900 flex items-center justify-center font-serif font-bold text-xl rounded-sm">J</div>
-              <span className="text-3xl font-serif font-bold tracking-tighter text-white">JADE</span>
-            </Link>
+              <Link to="/" className="flex items-center gap-2 group">
+                 {/* Logo Text - White */}
+                <span className="text-2xl font-normal tracking-tight text-white group-hover:text-jade-400 transition-colors">Jade</span>
+              </Link>
+            </div>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex space-x-8 text-sm font-bold tracking-wide text-gray-300">
-              <Link to="/shop?category=women" className="hover:text-white hover:underline decoration-2 underline-offset-4 transition-colors">WOMEN</Link>
-              <Link to="/shop?category=men" className="hover:text-white hover:underline decoration-2 underline-offset-4 transition-colors">MEN</Link>
-              <Link to="/shop?category=home" className="hover:text-white hover:underline decoration-2 underline-offset-4 transition-colors">HOME</Link>
-              <Link to="/shop?category=beauty" className="hover:text-white hover:underline decoration-2 underline-offset-4 transition-colors">BEAUTY</Link>
-              <Link to="/shop" className="hover:text-red-400 hover:underline decoration-2 underline-offset-4 transition-colors text-red-400">SALE</Link>
+            {/* Center: Navigation (Desktop) - Light Gray Text */}
+            <nav className="hidden lg:flex space-x-1">
+              {[
+                { name: 'Women', path: '/shop?category=women' },
+                { name: 'Men', path: '/shop?category=men' },
+                { name: 'Home', path: '/shop?category=home' },
+                { name: 'Beauty', path: '/shop?category=beauty' },
+                { name: 'Sale', path: '/shop', isSale: true },
+              ].map((link) => (
+                <Link 
+                  key={link.name}
+                  to={link.path} 
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                    link.isSale ? 'text-jade-400 hover:bg-white/10' : 'text-gray-300 hover:bg-white/10 hover:text-white'
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              ))}
             </nav>
 
-            {/* Icons */}
-            <div className="flex items-center space-x-4">
-              <div className="hidden sm:flex relative">
-                <input 
-                  type="text" 
-                  placeholder="Search" 
-                  className="pl-3 pr-10 py-2 border border-transparent bg-gray-800 text-white rounded-full text-sm focus:outline-none focus:bg-white focus:text-gray-900 focus:ring-1 focus:ring-jade-500 w-40 lg:w-64 transition-all placeholder-gray-400"
-                />
-                <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-jade-600">
-                  <Search size={18} />
-                </button>
-              </div>
-              <button className="text-white hover:text-jade-400 hidden sm:block">
-                <User size={24} strokeWidth={1.5} />
+            {/* Right: Icons - White/Gray */}
+            <div className="flex items-center space-x-1">
+              <button className="p-3 text-gray-300 hover:bg-white/10 hover:text-white rounded-full transition-colors hidden sm:block">
+                <Search size={20} />
               </button>
-              <Link to="/cart" className="text-white hover:text-jade-400 relative group">
-                <ShoppingBag size={24} strokeWidth={1.5} />
+              <button className="p-3 text-gray-300 hover:bg-white/10 hover:text-white rounded-full transition-colors hidden sm:block">
+                <HelpCircle size={20} />
+              </button>
+              <Link to="/cart" className="p-3 text-gray-300 hover:bg-white/10 hover:text-white rounded-full transition-colors relative">
+                <ShoppingBag size={20} />
                 {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full group-hover:scale-110 transition-transform">
+                  <span className="absolute top-2 right-2 bg-jade-500 text-white text-[10px] font-bold h-4 w-4 flex items-center justify-center rounded-full">
                     {cartCount}
                   </span>
                 )}
               </Link>
+              <button className="p-3 text-gray-300 hover:bg-white/10 hover:text-white rounded-full transition-colors hidden sm:block">
+                 <User size={20} />
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Mobile Navigation Menu */}
+        {/* Mobile Navigation Menu - Dark to match Header */}
         {isMenuOpen && (
-          <div className="lg:hidden bg-white border-t border-gray-100 absolute w-full left-0 top-20 shadow-lg py-4 px-4 flex flex-col space-y-4 text-gray-900 z-50">
-            <div className="relative mb-4">
+          <div className="lg:hidden bg-[#121827] absolute w-full left-0 top-16 shadow-xl py-4 px-6 flex flex-col space-y-4 text-white z-50 border-t border-gray-800 h-screen">
+             <div className="relative mb-2">
                <input 
                   type="text" 
-                  placeholder="Search products..." 
-                  className="w-full pl-3 pr-10 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-jade-500"
+                  placeholder="Search Jade Store" 
+                  className="w-full pl-10 pr-4 py-3 bg-gray-800 text-white placeholder-gray-400 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-jade-500 border-none"
                 />
-               <Search className="absolute right-3 top-3 text-gray-400" size={18} />
+               <Search className="absolute left-3 top-3.5 text-gray-400" size={18} />
             </div>
-            <Link to="/shop?category=women" className="text-lg font-semibold text-gray-800 border-b pb-2">Women</Link>
-            <Link to="/shop?category=men" className="text-lg font-semibold text-gray-800 border-b pb-2">Men</Link>
-            <Link to="/shop?category=home" className="text-lg font-semibold text-gray-800 border-b pb-2">Home</Link>
-            <Link to="/shop?category=beauty" className="text-lg font-semibold text-gray-800 border-b pb-2">Beauty</Link>
-            <Link to="/shop" className="text-lg font-bold text-red-600 pb-2">Sale & Clearance</Link>
+            <Link to="/shop?category=women" className="text-lg font-medium text-gray-300 py-2 border-b border-gray-800">Women</Link>
+            <Link to="/shop?category=men" className="text-lg font-medium text-gray-300 py-2 border-b border-gray-800">Men</Link>
+            <Link to="/shop?category=home" className="text-lg font-medium text-gray-300 py-2 border-b border-gray-800">Home</Link>
+            <Link to="/shop?category=beauty" className="text-lg font-medium text-gray-300 py-2 border-b border-gray-800">Beauty</Link>
+            <Link to="/shop" className="text-lg font-medium text-jade-400 py-2">Sale</Link>
           </div>
         )}
       </header>
 
-      {/* Hero Section - Full Width Video */}
-      <div className="relative w-full h-[500px] md:h-[650px] bg-black overflow-hidden mb-4">
-        <video 
-            className="w-full h-full object-cover opacity-80"
-            src="https://cdn.coverr.co/videos/coverr-fashion-photoshoot-with-a-model-4982/1080p.mp4"
-            autoPlay
-            muted
-            loop
-            playsInline
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-transparent flex items-center">
-          <div className="container mx-auto px-4 lg:px-8 max-w-[1440px]">
-            <div className="max-w-xl text-white">
-              <span className="uppercase tracking-[0.2em] text-sm font-bold mb-4 block text-jade-300 animate-in fade-in slide-in-from-bottom-4 duration-700">New Collection</span>
-              <h1 className="text-5xl md:text-7xl font-serif font-bold mb-6 leading-tight animate-in fade-in slide-in-from-bottom-8 duration-1000">
-                Summer <br/> Elegance
-              </h1>
-              <p className="text-lg md:text-xl mb-8 font-light text-gray-200 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-200">
-                Discover the latest trends in fashion and home. Curated just for you.
-              </p>
-              <Link 
-                to="/shop" 
-                className="inline-flex items-center gap-2 bg-white text-gray-900 px-8 py-4 font-bold tracking-wider hover:bg-jade-500 hover:text-white transition-all duration-300 animate-in fade-in zoom-in duration-1000 delay-300"
-              >
-                SHOP NOW <ArrowRight size={18} />
-              </Link>
+      {/* Hero Section - Clean, Rounded - Only on Homepage */}
+      {isHomePage && (
+        <div className="w-full max-w-[1440px] px-4 lg:px-6 pt-4 mb-8">
+            <div className="relative w-full h-[500px] md:h-[600px] rounded-[28px] md:rounded-[48px] overflow-hidden bg-gray-100">
+            <video 
+                className="w-full h-full object-cover"
+                src="https://cdn.coverr.co/videos/coverr-fashion-photoshoot-with-a-model-4982/1080p.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+            />
+            <div className="absolute inset-0 bg-black/10 flex flex-col items-center justify-center text-center p-6">
+                <h1 className="text-4xl md:text-6xl font-normal text-white mb-6 leading-tight tracking-tight drop-shadow-sm">
+                Summer Elegance. <br/> Redefined.
+                </h1>
+                <div className="flex gap-4">
+                    <Link 
+                    to="/shop" 
+                    className="bg-white text-gray-900 px-8 py-3 rounded-full font-medium hover:bg-gray-50 transition-colors shadow-sm"
+                    >
+                    Shop Collection
+                    </Link>
+                </div>
             </div>
-          </div>
+            </div>
         </div>
-      </div>
+      )}
 
-      {/* Main Content - Full Width */}
-      <main className="flex-grow flex flex-col max-w-[1440px]">
+      {/* Main Content */}
+      <main className="flex-grow flex flex-col w-full max-w-[1440px]">
         {children}
       </main>
 
-      {/* Footer - Full Width */}
-      <footer className="bg-gray-900 text-white pt-16 pb-8 w-full">
-        <div className="w-full max-w-[1440px] mx-auto px-4 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+      {/* Footer - Dark Background */}
+      <footer className="bg-[#121827] text-white border-t border-gray-800 pt-16 pb-8 w-full mt-auto">
+        <div className="w-full max-w-[1440px] mx-auto px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
             <div>
-              <h3 className="font-serif text-xl font-bold mb-6">Customer Service</h3>
+              <h3 className="text-sm font-medium text-white mb-4">Support</h3>
               <ul className="space-y-3 text-gray-400 text-sm">
-                <li><a href="#" className="hover:text-white transition">Order Status</a></li>
-                <li><a href="#" className="hover:text-white transition">Shipping & Delivery</a></li>
-                <li><a href="#" className="hover:text-white transition">Returns</a></li>
-                <li><a href="#" className="hover:text-white transition">Contact Us</a></li>
+                <li><a href="#" className="hover:text-jade-400 hover:underline">Order Status</a></li>
+                <li><a href="#" className="hover:text-jade-400 hover:underline">Returns</a></li>
+                <li><a href="#" className="hover:text-jade-400 hover:underline">Help Center</a></li>
               </ul>
             </div>
             <div>
-              <h3 className="font-serif text-xl font-bold mb-6">Our Stores</h3>
+              <h3 className="text-sm font-medium text-white mb-4">About</h3>
               <ul className="space-y-3 text-gray-400 text-sm">
-                <li><a href="#" className="hover:text-white transition">Store Locator</a></li>
-                <li><a href="#" className="hover:text-white transition">Curbside Pickup</a></li>
-                <li><a href="#" className="hover:text-white transition">Personal Stylist</a></li>
-                <li><a href="#" className="hover:text-white transition">Gift Cards</a></li>
+                <li><a href="#" className="hover:text-jade-400 hover:underline">Our Story</a></li>
+                <li><a href="#" className="hover:text-jade-400 hover:underline">Careers</a></li>
+                <li><a href="#" className="hover:text-jade-400 hover:underline">Sustainability</a></li>
+              </ul>
+            </div>
+             <div>
+              <h3 className="text-sm font-medium text-white mb-4">Store</h3>
+              <ul className="space-y-3 text-gray-400 text-sm">
+                <li><a href="#" className="hover:text-jade-400 hover:underline">Locations</a></li>
+                <li><a href="#" className="hover:text-jade-400 hover:underline">Services</a></li>
               </ul>
             </div>
             <div>
-              <h3 className="font-serif text-xl font-bold mb-6">Jade Rewards</h3>
-              <ul className="space-y-3 text-gray-400 text-sm">
-                <li><a href="#" className="hover:text-white transition">Join for Free</a></li>
-                <li><a href="#" className="hover:text-white transition">Manage Account</a></li>
-                <li><a href="#" className="hover:text-white transition">Cardholder Benefits</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-serif text-xl font-bold mb-6">Stay Connected</h3>
-              <p className="text-gray-400 text-sm mb-4">Sign up for emails & get 25% off today.</p>
-              <div className="flex">
-                <input type="email" placeholder="Email Address" className="bg-gray-800 border-none text-white px-4 py-2 w-full focus:ring-1 focus:ring-jade-500" />
-                <button className="bg-jade-600 px-4 py-2 font-bold uppercase text-xs tracking-wider hover:bg-jade-500 transition">Sign Up</button>
-              </div>
+                <div className="flex gap-4 mb-4">
+                    {/* Social Icons Placeholder */}
+                    <div className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center text-gray-400 hover:bg-gray-700 hover:text-white cursor-pointer transition-colors">f</div>
+                    <div className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center text-gray-400 hover:bg-gray-700 hover:text-white cursor-pointer transition-colors">t</div>
+                    <div className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center text-gray-400 hover:bg-gray-700 hover:text-white cursor-pointer transition-colors">in</div>
+                </div>
             </div>
           </div>
+          
           <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500">
-            <p>&copy; 2024 Jade Department Stores, Inc. All rights reserved.</p>
-            <div className="flex space-x-6 mt-4 md:mt-0">
-              <a href="#" className="hover:text-white">Privacy Policy</a>
-              <a href="#" className="hover:text-white">Terms of Use</a>
-              <a href="#" className="hover:text-white">CA Privacy Rights</a>
-            </div>
+             <div className="flex gap-6 mb-4 md:mb-0">
+                <span>United States</span>
+                <a href="#" className="hover:text-gray-300">Privacy</a>
+                <a href="#" className="hover:text-gray-300">Google Nest Commitment</a>
+                <a href="#" className="hover:text-gray-300">Sales Terms</a>
+                <a href="#" className="hover:text-gray-300">Terms of Service</a>
+             </div>
           </div>
         </div>
       </footer>
@@ -197,14 +214,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         {!isChatOpen && (
           <button 
             onClick={() => setIsChatOpen(true)}
-            className="bg-jade-600 hover:bg-jade-700 text-white rounded-full p-4 shadow-2xl flex items-center justify-center transition-transform hover:scale-105"
+            className="bg-white hover:bg-gray-50 text-jade-600 rounded-full p-4 shadow-lg border border-gray-100 flex items-center justify-center transition-all hover:scale-105"
           >
-            <MessageSquareMore size={28} />
+            <MessageSquareMore size={24} />
           </button>
         )}
       </div>
 
-      {/* Chat Drawer */}
       <GeminiChat isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
     </div>
   );

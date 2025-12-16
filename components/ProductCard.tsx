@@ -1,6 +1,6 @@
 import React from 'react';
 import { Product } from '../types';
-import { Star, Heart, ShoppingBag } from 'lucide-react';
+import { Star, Heart, Plus } from 'lucide-react';
 import { useProductDrawer } from '../App';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,80 +23,63 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     openProduct(product.id);
   };
 
-  const handleWishlistClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-    // Wishlist logic would go here
-    console.log('Wishlist clicked for', product.id);
-  };
-
   return (
     <div 
-      className="group flex flex-col h-full bg-white border border-transparent hover:border-gray-100 hover:shadow-xl transition-all duration-300 rounded-sm relative cursor-pointer overflow-hidden" 
+      className="group flex flex-col h-full bg-[#f1f3f4] hover:bg-[#ebedef] transition-colors duration-200 rounded-[28px] overflow-hidden cursor-pointer relative"
       onClick={handleCardClick}
     >
-       {/* Wishlist Button */}
+      {/* Wishlist Button - Minimal */}
        <button 
-         className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white/80 hover:bg-white text-gray-400 hover:text-red-500 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
-         onClick={handleWishlistClick}
-         title="Add to Wishlist"
+         className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white text-gray-500 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all shadow-sm"
+         onClick={(e) => {
+             e.stopPropagation();
+             e.preventDefault();
+             // Logic
+         }}
        >
         <Heart size={18} />
       </button>
 
-      {/* Image */}
-      <div className="relative overflow-hidden aspect-[3/4] bg-gray-100">
+      {/* Image Area - "Floating" effect */}
+      <div className="relative aspect-square w-full p-6 pb-0 flex items-center justify-center">
         <img 
           src={product.image} 
           alt={product.name} 
-          className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+          className="w-full h-full object-contain rounded-xl mix-blend-multiply group-hover:scale-105 transition-transform duration-500 ease-out"
         />
         {product.originalPrice && (
-          <div className="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider z-10">
-            Sale
-          </div>
+            <div className="absolute top-4 left-4 bg-jade-100 text-jade-800 text-[10px] font-bold px-2 py-1 rounded-md">
+                Sale
+            </div>
         )}
-        
-        {/* Add to Bag Button Overlay */}
-        <button
-          onClick={handleQuickAdd}
-          className="absolute bottom-0 left-0 w-full bg-white/95 text-gray-900 font-bold py-3 uppercase text-xs tracking-wider translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-20 flex items-center justify-center gap-2 hover:bg-jade-600 hover:text-white"
-        >
-          <ShoppingBag size={16} /> Add to Bag
-        </button>
       </div>
 
-      {/* Details */}
-      <div className="p-4 flex flex-col flex-grow">
-        <div className="block">
-            <h3 className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1">{product.brand}</h3>
-            <h2 className="text-sm font-medium text-gray-900 line-clamp-2 mb-2 group-hover:text-jade-700 transition-colors h-10">
-            {product.name}
-            </h2>
-        </div>
+      {/* Content Area */}
+      <div className="p-6 pt-2 flex flex-col flex-grow text-center">
+        <h2 className="text-lg font-medium text-gray-900 mb-1 leading-tight">
+          {product.name}
+        </h2>
+        <p className="text-xs text-gray-500 mb-3">{product.brand}</p>
         
-        {/* Rating */}
-        <div className="flex items-center mb-2">
-          <div className="flex text-yellow-400">
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} size={12} fill={i < Math.floor(product.rating) ? "currentColor" : "none"} strokeWidth={1} />
-            ))}
-          </div>
-          <span className="text-xs text-gray-400 ml-1">({product.reviews})</span>
-        </div>
-
-        {/* Price */}
         <div className="mt-auto">
-          <div className="flex items-baseline gap-2">
-            <span className={`text-base font-bold ${product.originalPrice ? 'text-red-600' : 'text-gray-900'}`}>
-              ${product.price.toFixed(2)}
-            </span>
-            {product.originalPrice && (
-              <span className="text-xs text-gray-500 line-through">
-                ${product.originalPrice.toFixed(2)}
-              </span>
-            )}
-          </div>
+             <div className="flex items-center justify-center gap-2 mb-4">
+                 <span className={`text-sm font-medium ${product.originalPrice ? 'text-jade-700' : 'text-gray-700'}`}>
+                    ${product.price.toFixed(2)}
+                 </span>
+                 {product.originalPrice && (
+                    <span className="text-xs text-gray-400 line-through">
+                         ${product.originalPrice.toFixed(2)}
+                    </span>
+                 )}
+            </div>
+            
+            {/* Pill Button - Hidden by default, shown on hover (or always visible on mobile) */}
+            <button
+                onClick={handleQuickAdd}
+                className="opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300 w-full max-w-[120px] mx-auto bg-white border border-gray-200 hover:bg-jade-50 hover:border-jade-200 text-jade-700 text-xs font-bold py-2 rounded-full flex items-center justify-center gap-1 shadow-sm"
+            >
+                <Plus size={14} strokeWidth={3} /> Add
+            </button>
         </div>
       </div>
     </div>

@@ -12,20 +12,17 @@ const GeminiChat: React.FC<GeminiChatProps> = ({ isOpen, onClose }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: 'model',
-      text: "Hello! I'm Jade, your personal style assistant. Looking for the perfect outfit, a gift idea, or home decor tips? I'm here to help!",
+      text: "Hi there! I'm Jade. How can I help you find what you're looking for today?",
       timestamp: new Date()
     }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  
-  // Keep chat session in ref to persist across re-renders but not cause them
   const chatSessionRef = useRef<any>(null);
 
   useEffect(() => {
     if (isOpen && !chatSessionRef.current) {
-        // Initialize chat session only once when opened
         chatSessionRef.current = createChatSession();
     }
   }, [isOpen]);
@@ -55,7 +52,7 @@ const GeminiChat: React.FC<GeminiChatProps> = ({ isOpen, onClose }) => {
         };
         setMessages(prev => [...prev, modelMsg]);
     } catch (e) {
-        // Error handling is inside service, but double safety
+        // Error handling
     } finally {
         setIsLoading(false);
     }
@@ -68,51 +65,53 @@ const GeminiChat: React.FC<GeminiChatProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-[60] w-full max-w-[360px] h-[500px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-100 animate-in slide-in-from-bottom-10 fade-in duration-300">
+    <div className="fixed bottom-6 right-6 z-[60] w-full max-w-[380px] h-[600px] bg-white rounded-[24px] shadow-2xl flex flex-col overflow-hidden border border-gray-100 animate-in slide-in-from-bottom-10 fade-in duration-300 font-sans">
       {/* Header */}
-      <div className="bg-jade-700 p-4 flex items-center justify-between text-white">
+      <div className="bg-white p-4 border-b border-gray-100 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
-            <Sparkles size={16} className="text-yellow-300" />
+          <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-100 to-jade-100 flex items-center justify-center">
+            <Sparkles size={18} className="text-jade-600" />
           </div>
           <div>
-            <h3 className="font-bold text-sm">Ask Jade</h3>
-            <p className="text-[10px] text-jade-100">AI Personal Stylist</p>
+            <h3 className="font-medium text-gray-900">Jade Assistant</h3>
+            <p className="text-xs text-jade-600 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 bg-jade-500 rounded-full"></span> Online
+            </p>
           </div>
         </div>
-        <button onClick={onClose} className="text-jade-100 hover:text-white transition-colors">
+        <button onClick={onClose} className="p-2 text-gray-400 hover:bg-gray-50 rounded-full transition-colors">
           <X size={20} />
         </button>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+      <div className="flex-1 overflow-y-auto p-4 space-y-6 bg-white">
         {messages.map((msg, idx) => (
-          <div key={idx} className={`flex gap-2 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-            <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center ${msg.role === 'user' ? 'bg-gray-200' : 'bg-jade-100'}`}>
-              {msg.role === 'user' ? <User size={14} className="text-gray-500" /> : <Bot size={14} className="text-jade-700" />}
-            </div>
-            <div className={`max-w-[80%] rounded-2xl px-4 py-2 text-sm shadow-sm ${
+          <div key={idx} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+            {msg.role === 'model' && (
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-50 to-jade-50 flex-shrink-0 flex items-center justify-center mt-1">
+                    <Bot size={16} className="text-jade-600" />
+                </div>
+            )}
+            
+            <div className={`max-w-[80%] rounded-2xl px-5 py-3 text-[15px] leading-relaxed shadow-sm ${
               msg.role === 'user' 
-                ? 'bg-jade-600 text-white rounded-tr-none' 
-                : 'bg-white text-gray-800 rounded-tl-none border border-gray-100'
+                ? 'bg-jade-600 text-white rounded-tr-sm' 
+                : 'bg-[#f1f3f4] text-gray-800 rounded-tl-sm'
             }`}>
-              <p className="whitespace-pre-wrap leading-relaxed">{msg.text}</p>
-              <span className={`text-[10px] block mt-1 opacity-70 ${msg.role === 'user' ? 'text-jade-100' : 'text-gray-400'}`}>
-                {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-              </span>
+              <p className="whitespace-pre-wrap">{msg.text}</p>
             </div>
           </div>
         ))}
         {isLoading && (
-          <div className="flex gap-2">
-            <div className="w-8 h-8 rounded-full bg-jade-100 flex items-center justify-center">
-               <Bot size={14} className="text-jade-700" />
+          <div className="flex gap-3">
+            <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center mt-1">
+               <Bot size={16} className="text-jade-600" />
             </div>
-            <div className="bg-white rounded-2xl rounded-tl-none px-4 py-3 border border-gray-100 shadow-sm flex items-center gap-1">
+            <div className="bg-[#f1f3f4] rounded-2xl rounded-tl-sm px-4 py-3 flex items-center gap-1.5 w-fit">
               <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></span>
+              <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:0.1s]"></span>
               <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:0.2s]"></span>
-              <span className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:0.4s]"></span>
             </div>
           </div>
         )}
@@ -120,26 +119,23 @@ const GeminiChat: React.FC<GeminiChatProps> = ({ isOpen, onClose }) => {
       </div>
 
       {/* Input */}
-      <div className="p-3 bg-white border-t border-gray-100">
-        <div className="flex items-center bg-gray-100 rounded-full px-4 py-2">
+      <div className="p-4 bg-white">
+        <div className="flex items-center bg-[#f1f3f4] rounded-full px-2 py-2 pr-2">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyPress}
-            placeholder="Ask for advice..."
-            className="flex-grow bg-transparent text-sm focus:outline-none text-gray-700 placeholder-gray-400"
+            placeholder="Message Jade..."
+            className="flex-grow bg-transparent text-[15px] focus:outline-none text-gray-900 placeholder-gray-500 px-4"
           />
           <button 
             onClick={handleSend}
             disabled={isLoading || !input.trim()}
-            className="text-jade-600 hover:text-jade-800 disabled:opacity-50 ml-2 transition-colors"
+            className="w-10 h-10 bg-jade-600 hover:bg-jade-700 disabled:opacity-50 disabled:hover:bg-jade-600 text-white rounded-full flex items-center justify-center transition-all shadow-sm"
           >
             <Send size={18} />
           </button>
-        </div>
-        <div className="text-center mt-2">
-            <p className="text-[10px] text-gray-400">Powered by Gemini. AI can make mistakes.</p>
         </div>
       </div>
     </div>

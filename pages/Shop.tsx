@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { MOCK_PRODUCTS, CATEGORIES } from '../constants';
 import ProductCard from '../components/ProductCard';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import { Filter, ChevronDown } from 'lucide-react';
 
 const Shop: React.FC = () => {
@@ -15,11 +15,8 @@ const Shop: React.FC = () => {
       products = products.filter(p => p.category.toLowerCase() === categoryParam.toLowerCase());
     }
     
-    if (sortBy === 'price-low') {
-        products.sort((a, b) => a.price - b.price);
-    } else if (sortBy === 'price-high') {
-        products.sort((a, b) => b.price - a.price);
-    }
+    if (sortBy === 'price-low') products.sort((a, b) => a.price - b.price);
+    else if (sortBy === 'price-high') products.sort((a, b) => b.price - a.price);
     
     return products;
   }, [categoryParam, sortBy]);
@@ -29,93 +26,66 @@ const Shop: React.FC = () => {
     : "All Products";
 
   return (
-    <div className="bg-white pb-20">
-        {/* Header */}
-        <div className="bg-gray-50 border-b border-gray-200 py-12 mb-8">
-            <div className="container mx-auto px-4 lg:px-8 text-center">
-                <h1 className="text-4xl font-serif font-bold text-gray-900 mb-2">{categoryName}</h1>
-                <p className="text-gray-500">{filteredProducts.length} items found</p>
-            </div>
-        </div>
-
-        <div className="container mx-auto px-4 lg:px-8 flex flex-col lg:flex-row gap-8">
-            {/* Sidebar Filters (Desktop) */}
-            <aside className="hidden lg:block w-64 flex-shrink-0">
-                <div className="sticky top-24 space-y-8">
-                    <div>
-                        <h3 className="font-bold text-gray-900 mb-4 pb-2 border-b border-gray-200">Categories</h3>
-                        <ul className="space-y-3 text-sm text-gray-600">
-                            <li><a href="/shop" className="hover:text-jade-600">All Products</a></li>
-                            {CATEGORIES.map(cat => (
-                                <li key={cat.id}>
-                                    <a href={`/shop?category=${cat.slug}`} className={`hover:text-jade-600 ${categoryParam === cat.slug ? 'text-jade-600 font-bold' : ''}`}>
-                                        {cat.name}
-                                    </a>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 className="font-bold text-gray-900 mb-4 pb-2 border-b border-gray-200">Price</h3>
-                        <div className="space-y-2 text-sm text-gray-600">
-                            <label className="flex items-center gap-2">
-                                <input type="checkbox" className="rounded border-gray-300 text-jade-600 focus:ring-jade-500" /> Under $50
-                            </label>
-                            <label className="flex items-center gap-2">
-                                <input type="checkbox" className="rounded border-gray-300 text-jade-600 focus:ring-jade-500" /> $50 - $100
-                            </label>
-                            <label className="flex items-center gap-2">
-                                <input type="checkbox" className="rounded border-gray-300 text-jade-600 focus:ring-jade-500" /> $100 - $200
-                            </label>
-                            <label className="flex items-center gap-2">
-                                <input type="checkbox" className="rounded border-gray-300 text-jade-600 focus:ring-jade-500" /> Over $200
-                            </label>
-                        </div>
-                    </div>
+    <div className="bg-white min-h-screen px-4 lg:px-8 py-8">
+        <div className="w-full max-w-[1440px] mx-auto">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+                <div>
+                    <h1 className="text-3xl font-normal text-gray-900 tracking-tight">{categoryName}</h1>
+                    <p className="text-sm text-gray-500 mt-1">{filteredProducts.length} results</p>
                 </div>
-            </aside>
-
-            {/* Main Content */}
-            <div className="flex-grow">
-                {/* Mobile Filters & Sort */}
-                <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-100 lg:border-none">
-                    <button className="lg:hidden flex items-center gap-2 text-sm font-bold text-gray-700">
-                        <Filter size={18} /> Filter
-                    </button>
-
-                    <div className="flex items-center gap-2 ml-auto">
-                        <span className="text-sm text-gray-500 hidden sm:inline">Sort by:</span>
-                        <div className="relative">
-                            <select 
-                                value={sortBy}
-                                onChange={(e) => setSortBy(e.target.value)}
-                                className="appearance-none bg-transparent text-sm font-bold text-gray-900 pr-8 pl-2 py-1 focus:outline-none cursor-pointer"
-                            >
-                                <option value="recommended">Recommended</option>
-                                <option value="price-low">Price: Low to High</option>
-                                <option value="price-high">Price: High to Low</option>
-                                <option value="newest">Newest Arrivals</option>
-                            </select>
-                            <ChevronDown size={14} className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500" />
-                        </div>
-                    </div>
+                
+                <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+                     <div className="relative group">
+                        <button className="flex items-center gap-2 px-4 py-2 rounded-full border border-gray-200 text-sm font-medium hover:border-gray-300">
+                            Sort by <ChevronDown size={14}/>
+                        </button>
+                         {/* Dropdown would go here, simplified for now to native select overlay */}
+                        <select 
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value)}
+                            className="absolute inset-0 opacity-0 cursor-pointer"
+                        >
+                            <option value="recommended">Recommended</option>
+                            <option value="price-low">Price: Low to High</option>
+                            <option value="price-high">Price: High to Low</option>
+                        </select>
+                     </div>
+                     <button className="flex items-center gap-2 px-4 py-2 rounded-full border border-gray-200 text-sm font-medium hover:border-gray-300">
+                        Price <ChevronDown size={14}/>
+                     </button>
                 </div>
-
-                {/* Product Grid */}
-                {filteredProducts.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {filteredProducts.map(product => (
-                            <ProductCard key={product.id} product={product} />
-                        ))}
-                    </div>
-                ) : (
-                    <div className="text-center py-20 bg-gray-50 rounded-lg">
-                        <h3 className="text-xl font-bold text-gray-900 mb-2">No products found</h3>
-                        <p className="text-gray-500 mb-6">Try selecting a different category or clearing your filters.</p>
-                        <a href="/shop" className="inline-block px-6 py-2 bg-jade-600 text-white font-bold rounded hover:bg-jade-700 transition">Clear Filters</a>
-                    </div>
-                )}
             </div>
+
+            {/* Quick Categories Pills */}
+            <div className="flex gap-2 mb-10 overflow-x-auto pb-2 no-scrollbar">
+                 <Link to="/shop" className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap border ${!categoryParam ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-200 text-gray-600 hover:border-gray-400'}`}>All</Link>
+                 {CATEGORIES.map(cat => (
+                     <Link 
+                        key={cat.id} 
+                        to={`/shop?category=${cat.slug}`}
+                        className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap border ${categoryParam === cat.slug ? 'bg-gray-900 text-white border-gray-900' : 'border-gray-200 text-gray-600 hover:border-gray-400'}`}
+                     >
+                        {cat.name}
+                     </Link>
+                 ))}
+            </div>
+
+            {/* Grid */}
+            {filteredProducts.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {filteredProducts.map(product => (
+                        <div key={product.id} className="h-full">
+                             <ProductCard product={product} />
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <div className="flex flex-col items-center justify-center py-32 bg-gray-50 rounded-[32px]">
+                    <h3 className="text-xl font-medium text-gray-900 mb-2">No products found</h3>
+                    <Link to="/shop" className="text-jade-600 hover:underline">View all items</Link>
+                </div>
+            )}
         </div>
     </div>
   );
