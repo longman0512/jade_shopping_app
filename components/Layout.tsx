@@ -3,6 +3,7 @@ import { ShoppingBag, Search, Menu, X, User, MessageSquareMore } from 'lucide-re
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../App';
 import GeminiChat from './GeminiChat';
+import { ArrowRight, Star, ChevronRight, ChevronLeft, Play } from 'lucide-react';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -24,15 +25,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#e3e6e6] text-gray-900 font-sans">
+    <div className="min-h-screen flex flex-col items-center bg-[#e3e6e6] text-gray-900 font-sans">
       {/* Promo Banner */}
       <div className="bg-jade-600 text-white text-xs sm:text-sm py-2 text-center px-4 font-bold tracking-wide">
         FRIENDS & FAMILY SALE: EXTRA 30% OFF SELECT STYLES | CODE: FRIEND
       </div>
 
-      {/* Header - Updated to match Footer (gray-900) */}
-      <header className="sticky top-0 z-40 bg-gray-900 border-b border-gray-800 shadow-lg">
-        <div className="container mx-auto px-4 lg:px-8">
+      {/* Header - Full Width Background */}
+      <header className="sticky top-0 z-40 bg-gray-900 border-b border-gray-800 shadow-lg w-full">
+        {/* Constrained Content Container */}
+        <div className="w-full max-w-[1440px] mx-auto px-4 lg:px-8">
           <div className="flex items-center justify-between h-20">
             {/* Mobile Menu Button */}
             <button 
@@ -104,14 +106,45 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         )}
       </header>
 
-      {/* Main Content */}
-      <main className="flex-grow">
+      {/* Hero Section - Full Width Video */}
+      <div className="relative w-full h-[500px] md:h-[650px] bg-black overflow-hidden mb-4">
+        <video 
+            className="w-full h-full object-cover opacity-80"
+            src="https://assets.mixkit.co/videos/preview/mixkit-fashion-model-posing-in-neon-light-398-large.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-transparent flex items-center">
+          <div className="container mx-auto px-4 lg:px-8 max-w-[1440px]">
+            <div className="max-w-xl text-white">
+              <span className="uppercase tracking-[0.2em] text-sm font-bold mb-4 block text-jade-300 animate-in fade-in slide-in-from-bottom-4 duration-700">New Collection</span>
+              <h1 className="text-5xl md:text-7xl font-serif font-bold mb-6 leading-tight animate-in fade-in slide-in-from-bottom-8 duration-1000">
+                Summer <br/> Elegance
+              </h1>
+              <p className="text-lg md:text-xl mb-8 font-light text-gray-200 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-200">
+                Discover the latest trends in fashion and home. Curated just for you.
+              </p>
+              <Link 
+                to="/shop" 
+                className="inline-flex items-center gap-2 bg-white text-gray-900 px-8 py-4 font-bold tracking-wider hover:bg-jade-500 hover:text-white transition-all duration-300 animate-in fade-in zoom-in duration-1000 delay-300"
+              >
+                SHOP NOW <ArrowRight size={18} />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content - Full Width */}
+      <main className="flex-grow flex flex-col max-w-[1440px]">
         {children}
       </main>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white pt-16 pb-8">
-        <div className="container mx-auto px-4 lg:px-8">
+      {/* Footer - Full Width */}
+      <footer className="bg-gray-900 text-white pt-16 pb-8 w-full">
+        <div className="w-full max-w-[1440px] mx-auto px-4 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
             <div>
               <h3 className="font-serif text-xl font-bold mb-6">Customer Service</h3>

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { CATEGORIES, MOCK_PRODUCTS } from '../constants';
+import { CATEGORIES, MOCK_PRODUCTS, BRANDS } from '../constants';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Star, ChevronRight, ChevronLeft, Play } from 'lucide-react';
 
@@ -28,11 +28,11 @@ const Home: React.FC = () => {
     { id: 3, poster: 'https://picsum.photos/seed/vposter3/600/350', url: 'https://assets.mixkit.co/videos/preview/mixkit-chef-preparing-a-salad-in-a-kitchen-40523-large.mp4', title: 'Culinary Excellence' },
   ];
 
-  // Auto slide video
+  // Auto slide video - Slower speed (8000ms)
   useEffect(() => {
     const interval = setInterval(() => {
         setCurrentVideoIndex(prev => (prev + 1) % promoVideos.length);
-    }, 5000); // 5 seconds
+    }, 8000); // 8 seconds
     return () => clearInterval(interval);
   }, [promoVideos.length]);
 
@@ -48,90 +48,66 @@ const Home: React.FC = () => {
 
   return (
     <div>
-      {/* Hero Section */}
-      <div className="relative h-[500px] md:h-[600px] bg-gray-100 overflow-hidden mb-4">
-        <img 
-          src="https://picsum.photos/seed/fashionhero/1920/1080" 
-          alt="New Arrivals" 
-          className="w-full h-full object-cover object-center"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-gray-900/70 to-transparent flex items-center">
-          <div className="container mx-auto px-4 lg:px-8">
-            <div className="max-w-xl text-white">
-              <span className="uppercase tracking-[0.2em] text-sm font-bold mb-4 block text-jade-300">New Collection</span>
-              <h1 className="text-5xl md:text-7xl font-serif font-bold mb-6 leading-tight">
-                Summer <br/> Elegance
-              </h1>
-              <p className="text-lg md:text-xl mb-8 font-light text-gray-200">
-                Discover the latest trends in fashion and home. Curated just for you.
-              </p>
-              <Link 
-                to="/shop" 
-                className="inline-flex items-center gap-2 bg-white text-gray-900 px-8 py-4 font-bold tracking-wider hover:bg-jade-500 hover:text-white transition-all duration-300"
-              >
-                SHOP NOW <ArrowRight size={18} />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
+      
 
       {/* SECTION 1: Can't-miss deals */}
-      <section className="py-12 bg-white mb-4">
-        <div className="container mx-auto px-4 lg:px-8 relative">
+      <section className="py-12 bg-white mb-4 relative">
+        <div className="container mx-auto px-4 lg:px-8 relative max-w-[1440px]">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-2xl md:text-3xl font-serif font-bold text-gray-900">Can't-Miss Deals</h2>
-            <div className="flex gap-2">
-                <button 
-                    onClick={() => scrollContainer(dealsScrollRef, 'left')}
-                    className="p-2 rounded-full border border-gray-200 hover:bg-gray-100 transition-colors"
-                >
-                    <ChevronLeft size={20} />
-                </button>
-                <button 
-                    onClick={() => scrollContainer(dealsScrollRef, 'right')}
-                    className="p-2 rounded-full border border-gray-200 hover:bg-gray-100 transition-colors"
-                >
-                    <ChevronRight size={20} />
-                </button>
-            </div>
           </div>
           
-          {/* Manual Sliding Carousel */}
-          <div 
-            ref={dealsScrollRef}
-            className="flex overflow-x-auto gap-4 pb-4 no-scrollbar snap-x snap-mandatory"
-          >
-            {deals.map((product) => (
-              <Link 
-                to={`/product/${product.id}`} 
-                key={product.id}
-                className="flex-shrink-0 w-56 snap-start group"
-              >
-                <div className="relative aspect-[3/4] bg-gray-100 mb-3 overflow-hidden rounded-sm">
-                   <img 
-                    src={product.image} 
-                    alt={product.name} 
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
-                   />
-                   {/* Discount Badge */}
-                   <div className="absolute top-2 right-2 bg-red-600 text-white font-bold text-sm px-3 py-1 rounded-sm shadow-md">
-                     {calculateDiscount(product.price, product.originalPrice)}% OFF
-                   </div>
-                </div>
-                {/* Simplified Content: Only Name */}
-                <h3 className="font-bold text-gray-900 text-base leading-tight group-hover:text-jade-700 transition-colors text-center">
-                  {product.name}
-                </h3>
-              </Link>
-            ))}
+          <div className="relative group/carousel">
+             {/* Navigation Buttons for Deals */}
+             <button 
+                onClick={() => scrollContainer(dealsScrollRef, 'left')}
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 z-10 p-3 bg-white shadow-lg rounded-full text-gray-700 hover:text-jade-600 border border-gray-100 hidden md:flex opacity-0 group-hover/carousel:opacity-100 transition-opacity duration-300"
+            >
+                <ChevronLeft size={24} />
+            </button>
+            <button 
+                onClick={() => scrollContainer(dealsScrollRef, 'right')}
+                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 z-10 p-3 bg-white shadow-lg rounded-full text-gray-700 hover:text-jade-600 border border-gray-100 hidden md:flex opacity-0 group-hover/carousel:opacity-100 transition-opacity duration-300"
+            >
+                <ChevronRight size={24} />
+            </button>
+
+            {/* Manual Sliding Carousel */}
+            <div 
+                ref={dealsScrollRef}
+                className="flex overflow-x-auto gap-4 pb-4 no-scrollbar snap-x snap-mandatory px-2"
+            >
+                {deals.map((product) => (
+                <Link 
+                    to={`/product/${product.id}`} 
+                    key={product.id}
+                    className="flex-shrink-0 w-56 snap-start group"
+                >
+                    <div className="relative aspect-[3/4] bg-gray-100 mb-3 overflow-hidden rounded-sm">
+                    <img 
+                        src={product.image} 
+                        alt={product.name} 
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                    />
+                    {/* Discount Badge */}
+                    <div className="absolute top-2 right-2 bg-red-600 text-white font-bold text-sm px-3 py-1 rounded-sm shadow-md">
+                        {calculateDiscount(product.price, product.originalPrice)}% OFF
+                    </div>
+                    </div>
+                    {/* Simplified Content: Only Name */}
+                    <h3 className="font-bold text-gray-900 text-base leading-tight group-hover:text-jade-700 transition-colors text-center px-2">
+                    {product.name}
+                    </h3>
+                </Link>
+                ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* SECTION 2: Loved by us, picked for you */}
       <section className="py-16 bg-white mb-4">
-        <div className="container mx-auto px-4 lg:px-8">
+        <div className="container mx-auto px-4 lg:px-8 max-w-[1440px]">
           <div className="text-center mb-8">
              <h2 className="text-3xl font-serif font-bold text-gray-900 mb-2">Loved by us, picked for you</h2>
              <p className="text-gray-500">Our stylists' top picks for this season.</p>
@@ -154,17 +130,17 @@ const Home: React.FC = () => {
             ))}
           </div>
 
-          <div className="relative">
-             {/* Navigation Buttons */}
+          <div className="relative group/carousel">
+             {/* Navigation Buttons for Loved Products */}
              <button 
                 onClick={() => scrollContainer(lovedScrollRef, 'left')}
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 p-3 bg-white shadow-lg rounded-full text-gray-700 hover:text-jade-600 border border-gray-100 hidden md:flex"
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 p-3 bg-white shadow-lg rounded-full text-gray-700 hover:text-jade-600 border border-gray-100 hidden md:flex opacity-0 group-hover/carousel:opacity-100 transition-opacity duration-300"
             >
                 <ChevronLeft size={24} />
             </button>
             <button 
                 onClick={() => scrollContainer(lovedScrollRef, 'right')}
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 p-3 bg-white shadow-lg rounded-full text-gray-700 hover:text-jade-600 border border-gray-100 hidden md:flex"
+                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 p-3 bg-white shadow-lg rounded-full text-gray-700 hover:text-jade-600 border border-gray-100 hidden md:flex opacity-0 group-hover/carousel:opacity-100 transition-opacity duration-300"
             >
                 <ChevronRight size={24} />
             </button>
@@ -236,14 +212,14 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* SECTION 3: Advertising and Promo (Single Video Auto-Slide) */}
+      {/* SECTION 3: Inspiration & Trends (Single Video Auto-Slide) */}
       <section className="py-12 bg-white mb-4">
-        <div className="container mx-auto px-4 lg:px-8">
+        <div className="container mx-auto px-4 lg:px-8 max-w-[1440px]">
           <h2 className="text-2xl font-serif font-bold text-gray-900 mb-8 text-center">Inspiration & Trends</h2>
           
-          <div className="max-w-4xl mx-auto relative group">
-              {/* Main Video Display */}
-              <div className="relative aspect-video rounded-xl overflow-hidden shadow-2xl bg-black">
+          {/* Main Video Display - Width same as container */}
+          <div className="w-full relative group">
+              <div className="relative aspect-video w-full rounded-xl overflow-hidden shadow-2xl bg-black">
                   {promoVideos.map((video, index) => (
                       <div 
                         key={video.id}
@@ -258,21 +234,21 @@ const Home: React.FC = () => {
                             autoPlay={index === currentVideoIndex}
                             playsInline
                          />
-                         <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent p-8 text-white">
-                            <h3 className="text-2xl font-serif font-bold mb-2">{video.title}</h3>
-                            <p className="text-sm opacity-90">Discover the stories behind the style.</p>
+                         <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent p-8 md:p-12 text-white">
+                            <h3 className="text-2xl md:text-4xl font-serif font-bold mb-3">{video.title}</h3>
+                            <p className="text-sm md:text-lg opacity-90">Discover the stories behind the style.</p>
                          </div>
                       </div>
                   ))}
               </div>
 
               {/* Indicators */}
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-3">
                   {promoVideos.map((_, idx) => (
                       <button 
                         key={idx}
                         onClick={() => setCurrentVideoIndex(idx)}
-                        className={`w-2 h-2 rounded-full transition-all duration-300 ${idx === currentVideoIndex ? 'bg-white w-6' : 'bg-white/50 hover:bg-white/80'}`}
+                        className={`h-2 rounded-full transition-all duration-500 shadow-sm ${idx === currentVideoIndex ? 'bg-white w-8' : 'bg-white/40 w-2 hover:bg-white/80'}`}
                       />
                   ))}
               </div>
@@ -281,26 +257,33 @@ const Home: React.FC = () => {
       </section>
 
       {/* SECTION 4: Top Brands for Gifting */}
-      <section className="py-16 bg-white">
-         <div className="container mx-auto px-4 lg:px-8">
+      <section className="py-16 bg-white mb-8">
+         <div className="container mx-auto px-4 lg:px-8 max-w-[1440px]">
             <h2 className="text-3xl font-serif font-bold text-gray-900 mb-10 text-center">Top Brands for Gifting</h2>
             
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8">
-                {deals.concat(lovedProducts).slice(0, 6).map((item, idx) => (
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
+                {BRANDS.map((brand, idx) => {
+                   // Find a representative image from products if available, else random
+                   const brandProduct = MOCK_PRODUCTS.find(p => p.brand.includes(brand.name));
+                   const displayImage = brandProduct ? brandProduct.image : `https://picsum.photos/seed/${brand.name}/400/400`;
+
+                   return (
                     <div key={idx} className="flex flex-col items-center group cursor-pointer">
-                        <div className="w-full aspect-square bg-gray-50 rounded-full overflow-hidden shadow-sm mb-4 border border-gray-100 group-hover:border-jade-600 transition-colors p-6 flex items-center justify-center relative">
-                            {/* Brand Image Mockup */}
-                            <img 
-                                src={item.image} 
-                                alt={item.brand} 
-                                className="w-full h-full object-cover rounded-full grayscale group-hover:grayscale-0 transition-all duration-500 opacity-80 group-hover:opacity-100" 
+                        {/* Product Image */}
+                        <div className="w-full aspect-square bg-gray-50 rounded-lg overflow-hidden shadow-sm mb-4 border border-gray-100 group-hover:border-jade-600 transition-colors relative">
+                             <img 
+                                src={displayImage} 
+                                alt={brand.name} 
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
                             />
                         </div>
-                        <span className="font-bold text-gray-900 text-sm uppercase tracking-wide group-hover:text-jade-700 border-b-2 border-transparent group-hover:border-jade-600 pb-1 transition-all">
-                            {item.brand}
-                        </span>
+                        
+                        {/* Brand Logo (Image) */}
+                        <div className="h-8 md:h-10 w-full flex items-center justify-center opacity-70 group-hover:opacity-100 transition-opacity">
+                            <img src={brand.logo} alt={`${brand.name} Logo`} className="h-full object-contain" />
+                        </div>
                     </div>
-                ))}
+                )})}
             </div>
          </div>
       </section>
