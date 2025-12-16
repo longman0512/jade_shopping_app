@@ -24,19 +24,19 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
-    <div className="min-h-screen flex flex-col bg-white text-gray-900 font-sans">
+    <div className="min-h-screen flex flex-col bg-[#e3e6e6] text-gray-900 font-sans">
       {/* Promo Banner */}
-      <div className="bg-jade-900 text-white text-xs sm:text-sm py-2 text-center px-4 font-bold tracking-wide">
+      <div className="bg-jade-600 text-white text-xs sm:text-sm py-2 text-center px-4 font-bold tracking-wide">
         FRIENDS & FAMILY SALE: EXTRA 30% OFF SELECT STYLES | CODE: FRIEND
       </div>
 
-      {/* Header */}
-      <header className="sticky top-0 z-40 bg-white border-b border-gray-100 shadow-sm">
+      {/* Header - Updated to match Footer (gray-900) */}
+      <header className="sticky top-0 z-40 bg-gray-900 border-b border-gray-800 shadow-lg">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="flex items-center justify-between h-20">
             {/* Mobile Menu Button */}
             <button 
-              className="lg:hidden p-2 text-gray-600 hover:text-jade-700"
+              className="lg:hidden p-2 text-white hover:text-jade-400"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -44,17 +44,17 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
             {/* Logo */}
             <Link to="/" className="flex-shrink-0 flex items-center gap-2">
-              <div className="w-8 h-8 bg-jade-600 text-white flex items-center justify-center font-serif font-bold text-xl rounded-sm">J</div>
-              <span className="text-3xl font-serif font-bold tracking-tighter text-gray-900">JADE</span>
+              <div className="w-8 h-8 bg-white text-gray-900 flex items-center justify-center font-serif font-bold text-xl rounded-sm">J</div>
+              <span className="text-3xl font-serif font-bold tracking-tighter text-white">JADE</span>
             </Link>
 
             {/* Desktop Navigation */}
-            <nav className="hidden lg:flex space-x-8 text-sm font-bold tracking-wide text-gray-700">
-              <Link to="/shop?category=women" className="hover:text-jade-600 hover:underline decoration-2 underline-offset-4 transition-colors">WOMEN</Link>
-              <Link to="/shop?category=men" className="hover:text-jade-600 hover:underline decoration-2 underline-offset-4 transition-colors">MEN</Link>
-              <Link to="/shop?category=home" className="hover:text-jade-600 hover:underline decoration-2 underline-offset-4 transition-colors">HOME</Link>
-              <Link to="/shop?category=beauty" className="hover:text-jade-600 hover:underline decoration-2 underline-offset-4 transition-colors">BEAUTY</Link>
-              <Link to="/shop" className="hover:text-red-600 hover:underline decoration-2 underline-offset-4 transition-colors text-red-600">SALE</Link>
+            <nav className="hidden lg:flex space-x-8 text-sm font-bold tracking-wide text-gray-300">
+              <Link to="/shop?category=women" className="hover:text-white hover:underline decoration-2 underline-offset-4 transition-colors">WOMEN</Link>
+              <Link to="/shop?category=men" className="hover:text-white hover:underline decoration-2 underline-offset-4 transition-colors">MEN</Link>
+              <Link to="/shop?category=home" className="hover:text-white hover:underline decoration-2 underline-offset-4 transition-colors">HOME</Link>
+              <Link to="/shop?category=beauty" className="hover:text-white hover:underline decoration-2 underline-offset-4 transition-colors">BEAUTY</Link>
+              <Link to="/shop" className="hover:text-red-400 hover:underline decoration-2 underline-offset-4 transition-colors text-red-400">SALE</Link>
             </nav>
 
             {/* Icons */}
@@ -63,16 +63,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <input 
                   type="text" 
                   placeholder="Search" 
-                  className="pl-3 pr-10 py-2 border border-gray-300 rounded-full text-sm focus:outline-none focus:border-jade-500 focus:ring-1 focus:ring-jade-500 w-40 lg:w-64 transition-all"
+                  className="pl-3 pr-10 py-2 border border-transparent bg-gray-800 text-white rounded-full text-sm focus:outline-none focus:bg-white focus:text-gray-900 focus:ring-1 focus:ring-jade-500 w-40 lg:w-64 transition-all placeholder-gray-400"
                 />
                 <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-jade-600">
                   <Search size={18} />
                 </button>
               </div>
-              <button className="text-gray-700 hover:text-jade-600 hidden sm:block">
+              <button className="text-white hover:text-jade-400 hidden sm:block">
                 <User size={24} strokeWidth={1.5} />
               </button>
-              <Link to="/cart" className="text-gray-700 hover:text-jade-600 relative group">
+              <Link to="/cart" className="text-white hover:text-jade-400 relative group">
                 <ShoppingBag size={24} strokeWidth={1.5} />
                 {cartCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full group-hover:scale-110 transition-transform">
@@ -86,7 +86,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
         {/* Mobile Navigation Menu */}
         {isMenuOpen && (
-          <div className="lg:hidden bg-white border-t border-gray-100 absolute w-full left-0 top-20 shadow-lg py-4 px-4 flex flex-col space-y-4">
+          <div className="lg:hidden bg-white border-t border-gray-100 absolute w-full left-0 top-20 shadow-lg py-4 px-4 flex flex-col space-y-4 text-gray-900 z-50">
             <div className="relative mb-4">
                <input 
                   type="text" 

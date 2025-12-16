@@ -101,5 +101,51 @@ export const MOCK_PRODUCTS: Product[] = [
     description: 'Professional quality stainless steel cookware set. Aluminum encapsulated base heats quickly and spreads heat evenly.',
     rating: 4.7,
     reviews: 430
+  },
+  {
+    id: 'p9',
+    name: 'Matte Lipstick',
+    brand: 'MAC',
+    price: 22.00,
+    category: 'Beauty',
+    image: 'https://picsum.photos/seed/lipstick/600/800',
+    description: 'The iconic product that made M·A·C famous. This creamy rich formula features high colour payoff in a no-shine matte finish.',
+    rating: 4.6,
+    reviews: 809
+  },
+  {
+    id: 'p10',
+    name: 'Egyptian Cotton Sheets',
+    brand: 'Hotel Collection',
+    price: 140.00,
+    originalPrice: 200.00,
+    category: 'Home',
+    image: 'https://picsum.photos/seed/sheets/600/800',
+    description: 'Experience the luxury of 5-star hotel bedding with these high thread count Egyptian cotton sheets.',
+    rating: 4.3,
+    reviews: 55
+  },
+  {
+    id: 'p11',
+    name: 'Leather Oxford Shoes',
+    brand: 'Cole Haan',
+    price: 150.00,
+    category: 'Men',
+    image: 'https://picsum.photos/seed/oxford/600/800',
+    description: 'Classic oxford shoes with modern comfort technology. Perfect for the office or formal events.',
+    rating: 4.8,
+    reviews: 112
+  },
+  {
+    id: 'p12',
+    name: 'Silk Scarf',
+    brand: 'Ralph Lauren',
+    price: 65.00,
+    originalPrice: 95.00,
+    category: 'Women',
+    image: 'https://picsum.photos/seed/scarf/600/800',
+    description: 'A beautiful silk scarf that adds a touch of elegance to any outfit.',
+    rating: 4.7,
+    reviews: 42
   }
 ];
