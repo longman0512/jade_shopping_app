@@ -48,8 +48,6 @@ const Home: React.FC = () => {
 
   return (
     <div>
-      
-
       {/* SECTION 1: Can't-miss deals */}
       <section className="py-12 bg-white mb-4 relative">
         <div className="container mx-auto px-4 lg:px-8 relative max-w-[1440px]">
@@ -212,14 +210,12 @@ const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* SECTION 3: Inspiration & Trends (Single Video Auto-Slide) */}
-      <section className="py-12 bg-white mb-4">
+      {/* SECTION 3: Inspiration & Trends (Single Video Auto-Slide) - No Title, No Padding */}
+      <section className="bg-white mb-4">
         <div className="container mx-auto px-4 lg:px-8 max-w-[1440px]">
-          <h2 className="text-2xl font-serif font-bold text-gray-900 mb-8 text-center">Inspiration & Trends</h2>
-          
           {/* Main Video Display - Width same as container */}
           <div className="w-full relative group">
-              <div className="relative aspect-video w-full rounded-xl overflow-hidden shadow-2xl bg-black">
+              <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-black">
                   {promoVideos.map((video, index) => (
                       <div 
                         key={video.id}
@@ -234,10 +230,6 @@ const Home: React.FC = () => {
                             autoPlay={index === currentVideoIndex}
                             playsInline
                          />
-                         <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent p-8 md:p-12 text-white">
-                            <h3 className="text-2xl md:text-4xl font-serif font-bold mb-3">{video.title}</h3>
-                            <p className="text-sm md:text-lg opacity-90">Discover the stories behind the style.</p>
-                         </div>
                       </div>
                   ))}
               </div>
