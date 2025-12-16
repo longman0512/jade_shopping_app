@@ -27,7 +27,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col items-center bg-[#e3e6e6] text-gray-900 font-sans">
       {/* Promo Banner */}
-      <div className="bg-jade-600 text-white text-xs sm:text-sm py-2 text-center px-4 font-bold tracking-wide">
+      <div className="bg-jade-600 w-full text-white text-xs sm:text-sm py-2 text-center px-4 font-bold tracking-wide">
         FRIENDS & FAMILY SALE: EXTRA 30% OFF SELECT STYLES | CODE: FRIEND
       </div>
 
@@ -110,7 +110,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <div className="relative w-full h-[500px] md:h-[650px] bg-black overflow-hidden mb-4">
         <video 
             className="w-full h-full object-cover opacity-80"
-            src="https://assets.mixkit.co/videos/preview/mixkit-fashion-model-posing-in-neon-light-398-large.mp4"
+            src="https://cdn.coverr.co/videos/coverr-fashion-photoshoot-with-a-model-4982/1080p.mp4"
             autoPlay
             muted
             loop

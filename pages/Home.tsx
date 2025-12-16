@@ -23,9 +23,9 @@ const Home: React.FC = () => {
   };
 
   const promoVideos = [
-    { id: 1, poster: 'https://picsum.photos/seed/vposter1/600/350', url: 'https://assets.mixkit.co/videos/preview/mixkit-girl-in-neon-sign-1232-large.mp4', title: 'Neon Summer Nights' },
-    { id: 2, poster: 'https://picsum.photos/seed/vposter2/600/350', url: 'https://assets.mixkit.co/videos/preview/mixkit-woman-putting-on-makeup-starts-smiling-869-large.mp4', title: 'Morning Rituals' },
-    { id: 3, poster: 'https://picsum.photos/seed/vposter3/600/350', url: 'https://assets.mixkit.co/videos/preview/mixkit-chef-preparing-a-salad-in-a-kitchen-40523-large.mp4', title: 'Culinary Excellence' },
+    { id: 1, poster: 'https://picsum.photos/seed/vposter1/600/350', url: 'https://cdn.coverr.co/videos/coverr-walking-in-a-city-at-night-4523/1080p.mp4', title: 'Neon Summer Nights' },
+    { id: 2, poster: 'https://picsum.photos/seed/vposter2/600/350', url: 'https://cdn.coverr.co/videos/coverr-applying-face-cream-979/1080p.mp4', title: 'Morning Rituals' },
+    { id: 3, poster: 'https://picsum.photos/seed/vposter3/600/350', url: 'https://cdn.coverr.co/videos/coverr-preparing-food-in-kitchen-2629/1080p.mp4', title: 'Culinary Excellence' },
   ];
 
   // Auto slide video - Slower speed (8000ms)
@@ -211,11 +211,11 @@ const Home: React.FC = () => {
       </section>
 
       {/* SECTION 3: Inspiration & Trends (Single Video Auto-Slide) - No Title, No Padding */}
-      <section className="bg-white mb-4">
-        <div className="container mx-auto px-4 lg:px-8 max-w-[1440px]">
+      <section className="mb-4">
+        <div className="container max-w-[1440px]">
           {/* Main Video Display - Width same as container */}
           <div className="w-full relative group">
-              <div className="relative aspect-video w-full rounded-xl overflow-hidden bg-black">
+              <div className="relative aspect-video w-full overflow-hidden bg-black">
                   {promoVideos.map((video, index) => (
                       <div 
                         key={video.id}
