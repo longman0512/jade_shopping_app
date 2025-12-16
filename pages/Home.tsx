@@ -2,13 +2,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import { CATEGORIES, MOCK_PRODUCTS, BRANDS } from '../constants';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Star, ChevronRight, ChevronLeft, Play } from 'lucide-react';
-import { useProductDrawer } from '../App';
+import ProductCard from '../components/ProductCard';
 
 const Home: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState('Women');
   const dealsScrollRef = useRef<HTMLDivElement>(null);
   const lovedScrollRef = useRef<HTMLDivElement>(null);
-  const { openProduct } = useProductDrawer();
   
   // Video Carousel State
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
@@ -18,11 +17,6 @@ const Home: React.FC = () => {
   
   // Products for "Loved by us" - filtering logic
   const lovedProducts = MOCK_PRODUCTS.filter(p => p.category === activeCategory);
-
-  const calculateDiscount = (price: number, original?: number) => {
-    if (!original) return 0;
-    return Math.round(((original - price) / original) * 100);
-  };
 
   const promoVideos = [
     { id: 1, poster: 'https://picsum.photos/seed/vposter1/600/350', url: 'https://cdn.coverr.co/videos/coverr-walking-in-a-city-at-night-4523/1080p.mp4', title: 'Neon Summer Nights' },
@@ -79,25 +73,10 @@ const Home: React.FC = () => {
             >
                 {deals.map((product) => (
                 <div 
-                    onClick={() => openProduct(product.id)}
                     key={product.id}
-                    className="flex-shrink-0 w-56 snap-start group cursor-pointer"
+                    className="flex-shrink-0 w-56 snap-start h-full"
                 >
-                    <div className="relative aspect-[3/4] bg-gray-100 mb-3 overflow-hidden rounded-sm">
-                    <img 
-                        src={product.image} 
-                        alt={product.name} 
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
-                    />
-                    {/* Discount Badge */}
-                    <div className="absolute top-2 right-2 bg-red-600 text-white font-bold text-sm px-3 py-1 rounded-sm shadow-md">
-                        {calculateDiscount(product.price, product.originalPrice)}% OFF
-                    </div>
-                    </div>
-                    {/* Simplified Content: Only Name */}
-                    <h3 className="font-bold text-gray-900 text-base leading-tight group-hover:text-jade-700 transition-colors text-center px-2">
-                    {product.name}
-                    </h3>
+                    <ProductCard product={product} />
                 </div>
                 ))}
             </div>
@@ -152,54 +131,8 @@ const Home: React.FC = () => {
                     className="flex overflow-x-auto gap-6 pb-6 no-scrollbar snap-x snap-mandatory px-2"
                 >
                 {lovedProducts.map((product) => (
-                    <div key={product.id} className="flex-shrink-0 w-80 snap-center bg-white border border-gray-100 rounded-sm hover:shadow-xl transition-all duration-300 flex flex-col group cursor-pointer" onClick={() => openProduct(product.id)}>
-                    <div className="block relative aspect-[4/5] overflow-hidden">
-                        <img 
-                        src={product.image} 
-                        alt={product.name} 
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                        />
-                         {product.originalPrice && (
-                            <div className="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider">
-                                Sale
-                            </div>
-                        )}
-                    </div>
-                    <div className="p-5 flex flex-col flex-grow">
-                        <div>
-                            <h3 className="font-bold text-lg text-gray-900 mb-2 hover:text-jade-700 transition-colors line-clamp-1">{product.name}</h3>
-                        </div>
-                        <p className="text-sm text-gray-500 line-clamp-2 mb-4 flex-grow">{product.description}</p>
-                        
-                        <div className="mt-auto pt-4 border-t border-gray-50">
-                            {/* Price */}
-                            <div className="flex items-baseline gap-2 mb-2">
-                                <span className={`text-xl font-bold ${product.originalPrice ? 'text-red-600' : 'text-gray-900'}`}>
-                                ${product.price.toFixed(2)}
-                                </span>
-                                {product.originalPrice && (
-                                <span className="text-sm text-gray-400 line-through">
-                                    ${product.originalPrice.toFixed(2)}
-                                </span>
-                                )}
-                            </div>
-
-                            {/* Reviews and Buy Stats */}
-                            <div className="flex justify-between items-center">
-                                <div className="flex items-center gap-1">
-                                    <div className="flex text-yellow-400">
-                                            {[...Array(5)].map((_, i) => (
-                                            <Star key={i} size={14} fill={i < Math.floor(product.rating) ? "currentColor" : "none"} strokeWidth={1} />
-                                            ))}
-                                    </div>
-                                    <span className="text-xs text-gray-400 ml-1">({product.reviews})</span>
-                                </div>
-                                <div className="text-xs font-bold text-gray-900 bg-gray-100 px-2 py-1 rounded">
-                                    {Math.floor(product.reviews / 2)}+ bought
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <div key={product.id} className="flex-shrink-0 w-80 snap-center">
+                       <ProductCard product={product} />
                     </div>
                 ))}
                 </div>

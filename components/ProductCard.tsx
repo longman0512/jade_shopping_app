@@ -1,7 +1,8 @@
 import React from 'react';
 import { Product } from '../types';
-import { Star, Heart } from 'lucide-react';
+import { Star, Heart, ShoppingBag } from 'lucide-react';
 import { useProductDrawer } from '../App';
+import { useNavigate } from 'react-router-dom';
 
 interface ProductCardProps {
   product: Product;
@@ -9,16 +10,37 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { openProduct } = useProductDrawer();
+  const navigate = useNavigate();
 
-  const handleClick = (e: React.MouseEvent) => {
+  const handleCardClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    navigate(`/product/${product.id}`);
+  };
+
+  const handleQuickAdd = (e: React.MouseEvent) => {
+    e.stopPropagation();
     e.preventDefault();
     openProduct(product.id);
   };
 
+  const handleWishlistClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    // Wishlist logic would go here
+    console.log('Wishlist clicked for', product.id);
+  };
+
   return (
-    <div className="group flex flex-col h-full bg-white border border-transparent hover:border-gray-100 hover:shadow-xl transition-all duration-300 rounded-sm relative cursor-pointer" onClick={handleClick}>
+    <div 
+      className="group flex flex-col h-full bg-white border border-transparent hover:border-gray-100 hover:shadow-xl transition-all duration-300 rounded-sm relative cursor-pointer overflow-hidden" 
+      onClick={handleCardClick}
+    >
        {/* Wishlist Button */}
-       <button className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white/80 hover:bg-white text-gray-400 hover:text-red-500 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
+       <button 
+         className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white/80 hover:bg-white text-gray-400 hover:text-red-500 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
+         onClick={handleWishlistClick}
+         title="Add to Wishlist"
+       >
         <Heart size={18} />
       </button>
 
@@ -30,10 +52,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
         />
         {product.originalPrice && (
-          <div className="absolute bottom-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider">
+          <div className="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 uppercase tracking-wider z-10">
             Sale
           </div>
         )}
+        
+        {/* Add to Bag Button Overlay */}
+        <button
+          onClick={handleQuickAdd}
+          className="absolute bottom-0 left-0 w-full bg-white/95 text-gray-900 font-bold py-3 uppercase text-xs tracking-wider translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-20 flex items-center justify-center gap-2 hover:bg-jade-600 hover:text-white"
+        >
+          <ShoppingBag size={16} /> Add to Bag
+        </button>
       </div>
 
       {/* Details */}

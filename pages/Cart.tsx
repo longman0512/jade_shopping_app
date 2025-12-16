@@ -1,11 +1,11 @@
 import React from 'react';
-import { useCart, useProductDrawer } from '../App';
+import { useCart } from '../App';
 import { Trash2, ArrowRight, ShoppingBag } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Cart: React.FC = () => {
   const { cartItems, removeFromCart } = useCart();
-  const { openProduct } = useProductDrawer();
+  const navigate = useNavigate();
 
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const shipping = subtotal > 75 ? 0 : 9.99;
@@ -38,7 +38,10 @@ const Cart: React.FC = () => {
             <div className="space-y-6">
                 {cartItems.map((item, index) => (
                     <div key={`${item.id}-${index}`} className="flex flex-col sm:flex-row gap-6 pb-6 border-b border-gray-100">
-                        <div className="w-full sm:w-32 aspect-[3/4] bg-gray-100 flex-shrink-0 cursor-pointer" onClick={() => openProduct(item.id)}>
+                        <div 
+                          className="w-full sm:w-32 aspect-[3/4] bg-gray-100 flex-shrink-0 cursor-pointer" 
+                          onClick={() => navigate(`/product/${item.id}`)}
+                        >
                             <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                         </div>
                         <div className="flex-grow">
@@ -46,7 +49,7 @@ const Cart: React.FC = () => {
                                 <div>
                                     <h3 className="text-xs font-bold text-gray-500 uppercase">{item.brand}</h3>
                                     <h2 className="text-lg font-medium text-gray-900">
-                                        <button onClick={() => openProduct(item.id)} className="hover:text-jade-600 text-left">{item.name}</button>
+                                        <Link to={`/product/${item.id}`} className="hover:text-jade-600 text-left">{item.name}</Link>
                                     </h2>
                                 </div>
                                 <span className="font-bold text-gray-900">${item.price.toFixed(2)}</span>
