@@ -252,7 +252,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div className="relative w-full h-[500px] md:h-[600px] rounded-[28px] md:rounded-[48px] overflow-hidden bg-gray-100">
             <video 
                 className="w-full h-full object-cover"
-                src="https://cdn.coverr.co/videos/coverr-fashion-photoshoot-with-a-model-4982/1080p.mp4"
+                src="/videos/v3.mp4"
                 autoPlay
                 muted
                 loop

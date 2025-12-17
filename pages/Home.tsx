@@ -16,9 +16,9 @@ const Home: React.FC = () => {
   const lovedProducts = MOCK_PRODUCTS.filter(p => p.category === activeCategory);
 
   const promoVideos = [
-    { id: 1, poster: 'https://picsum.photos/seed/vposter1/600/350', url: 'https://cdn.coverr.co/videos/coverr-walking-in-a-city-at-night-4523/1080p.mp4', title: 'Neon Summer Nights' },
-    { id: 2, poster: 'https://picsum.photos/seed/vposter2/600/350', url: 'https://cdn.coverr.co/videos/coverr-applying-face-cream-979/1080p.mp4', title: 'Morning Rituals' },
-    { id: 3, poster: 'https://picsum.photos/seed/vposter3/600/350', url: 'https://cdn.coverr.co/videos/coverr-preparing-food-in-kitchen-2629/1080p.mp4', title: 'Culinary Excellence' },
+    { id: 1, poster: 'https://picsum.photos/seed/vposter1/600/350', url: '/videos/v1.mp4', title: 'Neon Summer Nights' },
+    { id: 2, poster: 'https://picsum.photos/seed/vposter2/600/350', url: '/videos/v2.mp4', title: 'Morning Rituals' },
+    { id: 3, poster: 'https://picsum.photos/seed/vposter3/600/350', url: '/videos/v3.mp4', title: 'Culinary Excellence' },
   ];
 
   useEffect(() => {
@@ -147,7 +147,7 @@ const Home: React.FC = () => {
                         src={video.url}
                         muted
                         loop
-                        autoPlay={index === currentVideoIndex}
+                        autoPlay={true}
                         playsInline
                       />
                       <div className="absolute inset-0 flex flex-col items-center justify-center text-white">

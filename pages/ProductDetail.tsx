@@ -208,7 +208,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId, isSidebar = fa
       <VirtualTryOn 
         isOpen={isVTOOpen} 
         onClose={() => setIsVTOOpen(false)} 
-        productImage={product.image} 
+        productImage={product.vtoImage || product.image} 
       />
     </div>
   );

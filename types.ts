@@ -7,6 +7,7 @@ export interface Product {
   originalPrice?: number; // For sale display
   category: string;
   image: string;
+  vtoImage?: string;
   description: string;
   rating: number;
   reviews: number;

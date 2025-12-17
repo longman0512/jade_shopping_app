@@ -247,12 +247,13 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: 'p20',
-    name: 'Crystal Drop Earrings',
+    name: 'Libstick',
     brand: 'Swarovski',
     price: 125.00,
     category: 'Women',
-    image: '/ring.png',
-    description: 'Elegant crystal drop earrings that catch the light beautifully. Perfect for special occasions.',
+    image: '/libstick.png',
+    vtoImage: '/earring_single.png',
+    description: 'Elegant Libstick that catch the light beautifully. Perfect for special occasions.',
     rating: 4.8,
     reviews: 56,
     vtoAvailable: true
