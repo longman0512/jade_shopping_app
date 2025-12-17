@@ -1,9 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { MOCK_PRODUCTS } from '../constants';
-import { useCart } from '../App';
-import { Star, Truck, Shield, Minus, Plus, Sparkles, CheckCircle, Search, ChevronDown, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { useCart, useUser } from '../App';
+import { Star, Truck, Shield, Minus, Plus, Sparkles, CheckCircle, Search, ChevronDown, ThumbsUp, ThumbsDown, Heart, Camera } from 'lucide-react';
 import { createChatSession, sendMessageToGemini } from '../services/geminiService';
+import { VirtualTryOn } from '../components/VirtualTryOn';
 
 interface ProductDetailProps {
     productId?: string;
@@ -23,12 +25,16 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId, isSidebar = fa
   const id = productId || paramId;
   const product = MOCK_PRODUCTS.find(p => p.id === id);
   const { addToCart } = useCart();
+  const { wishlist, toggleWishlist } = useUser();
   const [quantity, setQuantity] = useState(1);
   const [selectedSize, setSelectedSize] = useState<string>('');
   
   const [styleAdvice, setStyleAdvice] = useState<string>('');
   const [isLoadingAdvice, setIsLoadingAdvice] = useState(false);
   const [activeAttribute, setActiveAttribute] = useState('Comfort');
+
+  // VTO State
+  const [isVTOOpen, setIsVTOOpen] = useState(false);
 
   useEffect(() => {
     setQuantity(1);
@@ -37,6 +43,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId, isSidebar = fa
   }, [id]);
 
   if (!product) return <div className="p-20 text-center">Product not found</div>;
+
+  const isLiked = wishlist.includes(product.id);
 
   const handleAddToCart = () => {
     addToCart({ ...product, quantity, selectedSize });
@@ -61,12 +69,18 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId, isSidebar = fa
           
           {/* Image - Updated to fill out */}
           <div className={`${isSidebar ? 'w-full' : 'w-full lg:w-1/2'}`}>
-            <div className={`bg-[#f1f3f4] rounded-[32px] overflow-hidden relative ${isSidebar ? 'aspect-square' : 'aspect-[4/3] lg:aspect-square'}`}>
+            <div className={`bg-[#f1f3f4] rounded-[32px] overflow-hidden relative ${isSidebar ? 'aspect-square' : 'aspect-[4/3] lg:aspect-square'} flex items-center justify-center p-8`}>
               <img 
                 src={product.image} 
                 alt={product.name} 
-                className="w-full h-full object-cover" 
+                className="w-full h-full object-contain" 
               />
+              <button 
+                onClick={() => toggleWishlist(product.id)}
+                className="absolute top-4 right-4 p-3 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors"
+              >
+                 <Heart size={20} className={isLiked ? "text-red-500 fill-red-500" : "text-gray-400"} />
+              </button>
             </div>
           </div>
 
@@ -88,16 +102,27 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId, isSidebar = fa
 
             <p className="text-gray-600 leading-relaxed mb-8 text-sm">{product.description}</p>
 
-            {/* AI Chip */}
-            <div className="mb-8">
+            {/* Actions Row */}
+            <div className="flex flex-wrap gap-4 mb-8">
+                {/* AI Stylist */}
                 {!styleAdvice && !isLoadingAdvice ? (
                     <button onClick={fetchStyleAdvice} className="flex items-center gap-2 text-sm font-medium text-jade-700 bg-jade-50 hover:bg-jade-100 px-4 py-2 rounded-full transition-colors w-fit">
                         <Sparkles size={16} /> Ask AI how to style this
                     </button>
                 ) : (
-                    <div className="bg-gray-50 rounded-2xl p-4 text-sm text-gray-700 animate-in fade-in">
+                    <div className="bg-gray-50 rounded-2xl p-4 text-sm text-gray-700 animate-in fade-in w-full">
                         {isLoadingAdvice ? "Thinking..." : <pre className="whitespace-pre-wrap font-sans">{styleAdvice}</pre>}
                     </div>
+                )}
+                
+                {/* VTO Button */}
+                {product.vtoAvailable && (
+                    <button 
+                        onClick={() => setIsVTOOpen(true)}
+                        className="flex items-center gap-2 text-sm font-medium text-white bg-black hover:bg-gray-800 px-4 py-2 rounded-full transition-colors w-fit shadow-md"
+                    >
+                        <Camera size={16} /> Virtual Try-On
+                    </button>
                 )}
             </div>
 
@@ -178,6 +203,13 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ productId, isSidebar = fa
           </div>
         </div>
       </div>
+      
+      {/* VTO Modal */}
+      <VirtualTryOn 
+        isOpen={isVTOOpen} 
+        onClose={() => setIsVTOOpen(false)} 
+        productImage={product.image} 
+      />
     </div>
   );
 };

@@ -1,3 +1,4 @@
+
 export interface Product {
   id: string;
   name: string;
@@ -9,6 +10,7 @@ export interface Product {
   description: string;
   rating: number;
   reviews: number;
+  vtoAvailable?: boolean;
 }
 
 export interface CartItem extends Product {
@@ -35,4 +37,48 @@ export interface Category {
   name: string;
   image: string;
   slug: string;
+}
+
+// New Types
+export type OrderStatus = 'Accepted' | 'In Delivery' | 'Finished';
+
+export interface Address {
+  id: string;
+  name: string;
+  street: string;
+  city: string;
+  zip: string;
+  country: string;
+  isDefault?: boolean;
+}
+
+export interface Order {
+  id: string;
+  items: CartItem[];
+  date: string;
+  status: OrderStatus;
+  subtotal: number;
+  tax: number;
+  shipping: number;
+  total: number;
+  shippingAddress: Address;
+  paymentMethod: 'Credit Card' | 'PayPal';
+}
+
+export interface Notification {
+  id: string;
+  title: string;
+  message: string;
+  date: string;
+  read: boolean;
+  type: 'order' | 'promo' | 'system';
+}
+
+export interface UserSettings {
+  language: 'en' | 'es' | 'fr' | 'de';
+  notifications: {
+    email: boolean;
+    push: boolean;
+    inApp: boolean;
+  };
 }

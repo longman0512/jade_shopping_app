@@ -1,3 +1,4 @@
+
 import { Product, Category } from './types';
 
 export const CATEGORIES: Category[] = [
@@ -243,5 +244,17 @@ export const MOCK_PRODUCTS: Product[] = [
     description: 'Forget about vacuuming for months at a time with the bagless self-emptying base.',
     rating: 4.5,
     reviews: 890
+  },
+  {
+    id: 'p20',
+    name: 'Crystal Drop Earrings',
+    brand: 'Swarovski',
+    price: 125.00,
+    category: 'Women',
+    image: '/ring.png',
+    description: 'Elegant crystal drop earrings that catch the light beautifully. Perfect for special occasions.',
+    rating: 4.8,
+    reviews: 56,
+    vtoAvailable: true
   }
 ];

@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { ShoppingBag, Search, Menu, X, User, MessageSquareMore, HelpCircle } from 'lucide-react';
+
+import React, { useState, useEffect, useRef } from 'react';
+import { ShoppingBag, Search, Menu, X, User, MessageSquareMore, HelpCircle, Heart, Bell, Settings, LogOut, Package, LayoutDashboard, Globe } from 'lucide-react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useCart } from '../App';
+import { useCart, useUser } from '../App';
 import GeminiChat from './GeminiChat';
-import { ArrowRight } from 'lucide-react';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -11,19 +11,38 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isNotifOpen, setIsNotifOpen] = useState(false);
+  
   const { cartItems } = useCart();
+  const { notifications, markNotificationRead, settings, updateSettings } = useUser();
   const navigate = useNavigate();
   const location = useLocation();
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  // Scroll to top on route change
+  const userMenuRef = useRef<HTMLDivElement>(null);
+  const notifMenuRef = useRef<HTMLDivElement>(null);
+
+  // Close menus when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setIsUserMenuOpen(false);
+      }
+      if (notifMenuRef.current && !notifMenuRef.current.contains(event.target as Node)) {
+        setIsNotifOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   useEffect(() => {
     window.scrollTo(0, 0);
     setIsMenuOpen(false);
   }, [location]);
 
-  // Handle scroll effect for header shadow
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10);
@@ -33,16 +52,24 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   }, []);
 
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  const unreadNotifs = notifications.filter(n => !n.read).length;
   const isHomePage = location.pathname === '/';
+
+  const LANGUAGES = [
+    { code: 'en', label: 'English' },
+    { code: 'es', label: 'Español' },
+    { code: 'fr', label: 'Français' },
+    { code: 'de', label: 'Deutsch' },
+  ];
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-white text-[#202124] font-sans">
-      {/* Top utility bar - Green Background */}
-      <div className="w-full bg-[#26966b] text-[11px] py-2 text-center text-white font-medium">
+      {/* Top utility bar */}
+      <div className="w-full bg-[#26966b] text-[11px] py-2 text-center text-white font-medium relative z-50">
         Free shipping on all orders. <span className="text-white font-bold ml-1 cursor-pointer hover:underline">Learn more</span>
       </div>
 
-      {/* Header - Dark Background */}
+      {/* Header */}
       <header className={`sticky top-0 z-40 bg-[#121827] w-full transition-shadow duration-200 ${scrolled ? 'shadow-md' : ''}`}>
         <div className="w-full max-w-[1440px] mx-auto px-6">
           <div className="flex items-center justify-between h-16">
@@ -57,12 +84,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               </button>
 
               <Link to="/" className="flex items-center gap-2 group">
-                 {/* Logo Text - White */}
                 <span className="text-2xl font-normal tracking-tight text-white group-hover:text-jade-400 transition-colors">Jade</span>
               </Link>
             </div>
 
-            {/* Center: Navigation (Desktop) - Light Gray Text */}
+            {/* Center: Navigation (Desktop) */}
             <nav className="hidden lg:flex space-x-1">
               {[
                 { name: 'Women', path: '/shop?category=women' },
@@ -83,32 +109,121 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               ))}
             </nav>
 
-            {/* Right: Icons - White/Gray */}
-            <div className="flex items-center space-x-1">
-              <button className="p-3 text-gray-300 hover:bg-white/10 hover:text-white rounded-full transition-colors hidden sm:block">
-                <Search size={20} />
-              </button>
-              <button className="p-3 text-gray-300 hover:bg-white/10 hover:text-white rounded-full transition-colors hidden sm:block">
-                <HelpCircle size={20} />
-              </button>
-              <Link to="/cart" className="p-3 text-gray-300 hover:bg-white/10 hover:text-white rounded-full transition-colors relative">
+            {/* Right: Icons */}
+            <div className="flex items-center space-x-2">
+              {/* Language Selector */}
+              <div className="hidden md:block relative group">
+                  <button className="p-2 text-gray-300 hover:text-white flex items-center gap-1 text-xs uppercase font-medium">
+                      <Globe size={16} /> {settings.language}
+                  </button>
+                  <div className="absolute right-0 top-full pt-2 opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-200 w-32">
+                      <div className="bg-white rounded-xl shadow-xl overflow-hidden py-1 border border-gray-100">
+                          {LANGUAGES.map(lang => (
+                              <button 
+                                key={lang.code}
+                                onClick={() => updateSettings({ language: lang.code as any })}
+                                className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 ${settings.language === lang.code ? 'text-jade-600 font-bold' : 'text-gray-700'}`}
+                              >
+                                  {lang.label}
+                              </button>
+                          ))}
+                      </div>
+                  </div>
+              </div>
+
+              <div className="h-6 w-px bg-gray-700 mx-1 hidden sm:block"></div>
+
+              <Link to="/cart" className="p-2 text-gray-300 hover:bg-white/10 hover:text-white rounded-full transition-colors relative">
                 <ShoppingBag size={20} />
                 {cartCount > 0 && (
-                  <span className="absolute top-2 right-2 bg-jade-500 text-white text-[10px] font-bold h-4 w-4 flex items-center justify-center rounded-full">
+                  <span className="absolute top-1 right-1 bg-jade-500 text-white text-[10px] font-bold h-4 w-4 flex items-center justify-center rounded-full">
                     {cartCount}
                   </span>
                 )}
               </Link>
-              <button className="p-3 text-gray-300 hover:bg-white/10 hover:text-white rounded-full transition-colors hidden sm:block">
-                 <User size={20} />
-              </button>
+
+              {/* Notifications */}
+              <div className="relative" ref={notifMenuRef}>
+                <button 
+                    onClick={() => setIsNotifOpen(!isNotifOpen)}
+                    className="p-2 text-gray-300 hover:bg-white/10 hover:text-white rounded-full transition-colors relative"
+                >
+                    <Bell size={20} />
+                    {unreadNotifs > 0 && (
+                        <span className="absolute top-1.5 right-2 h-2.5 w-2.5 bg-red-500 rounded-full border-2 border-[#121827]"></span>
+                    )}
+                </button>
+                
+                {isNotifOpen && (
+                    <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-50 animate-in slide-in-from-top-2 fade-in duration-200">
+                        <div className="p-3 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                            <h3 className="font-medium text-sm text-gray-900">Notifications</h3>
+                            <button onClick={() => notifications.forEach(n => markNotificationRead(n.id))} className="text-xs text-jade-600 hover:underline">Mark all read</button>
+                        </div>
+                        <div className="max-h-[300px] overflow-y-auto">
+                            {notifications.length === 0 ? (
+                                <div className="p-8 text-center text-gray-500 text-sm">No notifications yet</div>
+                            ) : (
+                                notifications.map(notif => (
+                                    <div 
+                                        key={notif.id} 
+                                        onClick={() => markNotificationRead(notif.id)}
+                                        className={`p-4 border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition-colors ${!notif.read ? 'bg-blue-50/50' : ''}`}
+                                    >
+                                        <div className="flex justify-between items-start mb-1">
+                                            <span className="font-medium text-sm text-gray-900">{notif.title}</span>
+                                            <span className="text-[10px] text-gray-400">{new Date(notif.date).toLocaleDateString()}</span>
+                                        </div>
+                                        <p className="text-xs text-gray-600 leading-snug">{notif.message}</p>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                )}
+              </div>
+
+              {/* User Menu */}
+              <div className="relative" ref={userMenuRef}>
+                <button 
+                    onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                    className="p-2 text-gray-300 hover:bg-white/10 hover:text-white rounded-full transition-colors"
+                >
+                    <User size={20} />
+                </button>
+                
+                {isUserMenuOpen && (
+                    <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-50 animate-in slide-in-from-top-2 fade-in duration-200">
+                        <div className="p-4 border-b border-gray-100 bg-gray-50">
+                            <p className="font-medium text-gray-900 text-sm">Hello, Guest</p>
+                            <p className="text-xs text-gray-500">Sign in for best experience</p>
+                        </div>
+                        <div className="py-2">
+                             <Link to="/account/profile" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-jade-600">
+                                <User size={16} /> My Profile
+                            </Link>
+                            <Link to="/account/orders" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-jade-600">
+                                <Package size={16} /> My Orders
+                            </Link>
+                             <Link to="/account/wishlist" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-jade-600">
+                                <Heart size={16} /> Wishlist
+                            </Link>
+                             <div className="h-px bg-gray-100 my-1"></div>
+                             <Link to="/admin" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-jade-600">
+                                <LayoutDashboard size={16} /> Admin Demo
+                            </Link>
+                        </div>
+                    </div>
+                )}
+              </div>
+
             </div>
           </div>
         </div>
 
-        {/* Mobile Navigation Menu - Dark to match Header */}
+        {/* Mobile Navigation Menu */}
         {isMenuOpen && (
-          <div className="lg:hidden bg-[#121827] absolute w-full left-0 top-16 shadow-xl py-4 px-6 flex flex-col space-y-4 text-white z-50 border-t border-gray-800 h-screen">
+          <div className="lg:hidden bg-[#121827] absolute w-full left-0 top-16 shadow-xl py-4 px-6 flex flex-col space-y-4 text-white z-50 border-t border-gray-800 h-screen overflow-y-auto pb-20">
              <div className="relative mb-2">
                <input 
                   type="text" 
@@ -117,11 +232,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 />
                <Search className="absolute left-3 top-3.5 text-gray-400" size={18} />
             </div>
-            <Link to="/shop?category=women" className="text-lg font-medium text-gray-300 py-2 border-b border-gray-800">Women</Link>
-            <Link to="/shop?category=men" className="text-lg font-medium text-gray-300 py-2 border-b border-gray-800">Men</Link>
-            <Link to="/shop?category=home" className="text-lg font-medium text-gray-300 py-2 border-b border-gray-800">Home</Link>
-            <Link to="/shop?category=beauty" className="text-lg font-medium text-gray-300 py-2 border-b border-gray-800">Beauty</Link>
-            <Link to="/shop" className="text-lg font-medium text-jade-400 py-2">Sale</Link>
+            <Link to="/shop?category=women" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium text-gray-300 py-2 border-b border-gray-800">Women</Link>
+            <Link to="/shop?category=men" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium text-gray-300 py-2 border-b border-gray-800">Men</Link>
+            <Link to="/shop?category=home" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium text-gray-300 py-2 border-b border-gray-800">Home</Link>
+            <Link to="/shop?category=beauty" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium text-gray-300 py-2 border-b border-gray-800">Beauty</Link>
+            <Link to="/shop" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium text-jade-400 py-2">Sale</Link>
+            <div className="pt-4 border-t border-gray-800">
+                <Link to="/account/orders" onClick={() => setIsMenuOpen(false)} className="block py-2 text-gray-400">Track Order</Link>
+                <Link to="/account/wishlist" onClick={() => setIsMenuOpen(false)} className="block py-2 text-gray-400">Wishlist</Link>
+                <Link to="/account/profile" onClick={() => setIsMenuOpen(false)} className="block py-2 text-gray-400">Account Settings</Link>
+            </div>
           </div>
         )}
       </header>
@@ -167,7 +287,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div>
               <h3 className="text-sm font-medium text-white mb-4">Support</h3>
               <ul className="space-y-3 text-gray-400 text-sm">
-                <li><a href="#" className="hover:text-jade-400 hover:underline">Order Status</a></li>
+                <li><Link to="/account/orders" className="hover:text-jade-400 hover:underline">Order Status</Link></li>
                 <li><a href="#" className="hover:text-jade-400 hover:underline">Returns</a></li>
                 <li><a href="#" className="hover:text-jade-400 hover:underline">Help Center</a></li>
               </ul>
@@ -189,7 +309,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </div>
             <div>
                 <div className="flex gap-4 mb-4">
-                    {/* Social Icons Placeholder */}
                     <div className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center text-gray-400 hover:bg-gray-700 hover:text-white cursor-pointer transition-colors">f</div>
                     <div className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center text-gray-400 hover:bg-gray-700 hover:text-white cursor-pointer transition-colors">t</div>
                     <div className="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center text-gray-400 hover:bg-gray-700 hover:text-white cursor-pointer transition-colors">in</div>
